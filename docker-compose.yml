@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  tennis-website:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sakka-tennis-website
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - tennis-network
+
+networks:
+  tennis-network:
+    driver: bridge

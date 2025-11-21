@@ -1,333 +1,204 @@
-# 🎾 Tennis Coaching Website - Montreal
+# 🎾 Sakka Tennis Coach - Professional Website
 
-[![License](https://img.shields.io/badge/license-Private-red.svg)](LICENSE)
-[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-38bdf8.svg)](https://tailwindcss.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ed.svg)](https://www.docker.com/)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8.svg)](https://tailwindcss.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 
-Site web professionnel pour un coach de tennis basé à Montréal, QC. Présentation des services de coaching, expérience, réalisations et témoignages.
+Professional tennis coaching website for **Mohamed Anis Sakka**, based in Montreal, QC. Showcasing 20+ years of playing experience and 5+ years of professional coaching expertise.
 
----
+## 🌟 Features
 
-## 📸 Aperçu
+- **Modern Design**: Sleek, responsive design with smooth animations (GSAP, Framer Motion)
+- **Photo Gallery**: Professional gallery with 7 high-quality coaching photos
+- **Comprehensive About Section**: Detailed experience timeline, highlights, and achievements
+- **Services Showcase**: Private lessons, group training, and competitive development programs
+- **Testimonials**: Client feedback and success stories
+- **Contact Form**: Easy booking and inquiry system
+- **Multi-language Support**: French, English, and Arabic
+- **Docker Ready**: Complete containerization for easy deployment
 
-Un site web moderne et responsive présentant :
-- **Services de coaching** - Cours privés, sessions de groupe, développement compétitif
-- **Galerie photos** - 7 photos professionnelles des sessions d'entraînement
-- **Réalisations** - Champions nationaux tunisiens et expérience internationale
-- **À propos** - Profil du coach avec certifications et expérience
-- **Témoignages** - Avis et retours des clients
+## 🚀 Quick Start
 
----
+### Development Mode
 
-## ✨ Fonctionnalités
+```bash
+# Install dependencies
+pnpm install
 
-- ✅ **Design Responsive** - Optimisé pour mobile, tablette et desktop
-- ✅ **Interface Moderne** - UI élégante avec React 19 et Tailwind CSS 4
-- ✅ **Galerie Interactive** - Modal plein écran avec effets hover
-- ✅ **Navigation Fluide** - Scroll smooth et animations
-- ✅ **Thème Dynamique** - Couleurs adaptatives selon les sections
-- ✅ **Performance Optimisée** - Build rapide avec Vite
-- ✅ **Docker Ready** - Déploiement conteneurisé facile
+# Start development server
+pnpm dev
 
----
+# Access at http://localhost:3000
+```
 
-## 🛠️ Technologies Utilisées
+### Docker Deployment (Recommended)
+
+```bash
+# Build and start container
+docker-compose up -d --build
+
+# Access at http://localhost:8080
+```
+
+See [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md) for detailed deployment instructions.
+
+## 📁 Project Structure
+
+```
+tennis_website/
+├── client/                    # React frontend application
+│   ├── public/
+│   │   └── gallery/          # Professional coaching photos (7 images)
+│   └── src/
+│       ├── components/       # React components
+│       │   ├── Gallery.tsx   # Photo gallery component
+│       │   ├── About.tsx     # Enhanced about section
+│       │   ├── Portfolio.tsx # Achievements showcase
+│       │   └── ...
+│       ├── hooks/            # Custom React hooks
+│       └── index.css         # Global styles with CSS variables
+├── Dockerfile                # Docker configuration
+├── docker-compose.yml        # Docker Compose setup
+├── nginx.conf               # Nginx configuration
+└── README.md                # This file
+```
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- **React 19** - Bibliothèque UI moderne
-- **TypeScript** - JavaScript typé et sécurisé
-- **Tailwind CSS 4** - Framework CSS utility-first
-- **Vite** - Build tool ultra-rapide
-- **Wouter** - Routing léger
-- **shadcn/ui** - Composants UI de haute qualité
-- **Lucide React** - Bibliothèque d'icônes
+- **React 18** - Modern UI library
+- **TypeScript** - Type-safe development
+- **Tailwind CSS 4** - Utility-first styling
+- **shadcn/ui** - High-quality component library
+- **GSAP & Framer Motion** - Smooth animations
+- **Vite 7** - Fast build tool
 
-### DevOps
-- **Docker** - Conteneurisation
-- **Nginx** - Serveur web de production
-- **pnpm** - Gestionnaire de paquets performant
+### Deployment
+- **Docker** - Containerization
+- **Nginx** - Production web server
+- **pnpm** - Fast package manager
 
----
+## 📸 Gallery
 
-## 📦 Installation
+The website includes a professional photo gallery featuring:
+- Training sessions with students
+- Victory celebrations with champions
+- International experience (Rogers Cup Montreal, WTA 250)
+- Group coaching sessions
+- Private lessons
 
-### Prérequis
+## 🎯 Key Sections
 
-- **Node.js** 18+ (LTS recommandé)
-- **pnpm** 8+ (ou npm/yarn)
-- **Git**
+### About Me
+- Professional highlights and achievements
+- Experience timeline (2018-2025)
+- Language skills (French, English, Arabic)
+- Certifications and training
 
-### Cloner le Dépôt
+### Achievements
+- Vice-Champion of Tunisia (2018 Junior, 2019 Senior)
+- National champions developed (Lina Soussi, Rined Saafi, and more)
+- Team leadership (U12 Championship semi-finals)
+- International experience (WTA, Rogers Cup)
 
-```bash
-git clone https://github.com/sakkovic/tennisjeannemance.git
-cd tennisjeannemance
-```
+### Services
+- **Private Lessons**: One-on-one personalized coaching
+- **Group Training**: Small group sessions for skill development
+- **Competitive Development**: Tournament preparation and strategy
 
-### Installer les Dépendances
+## 🐳 Docker Deployment
 
-```bash
-pnpm install
-```
-
----
-
-## 🚀 Développement Local
-
-### Démarrer le Serveur de Développement
-
-```bash
-pnpm dev
-```
-
-Le site sera accessible sur **http://localhost:3000**
-
-### Build de Production
-
-```bash
-pnpm build
-```
-
-Les fichiers optimisés seront dans le dossier `dist/`
-
-### Prévisualiser le Build
-
-```bash
-pnpm preview
-```
-
----
-
-## 🐳 Déploiement Docker
-
-### Méthode Rapide (Docker Compose)
-
+### Quick Deploy
 ```bash
 docker-compose up -d --build
 ```
 
-Le site sera accessible sur **http://localhost:8080**
+### Production Deploy
+```bash
+# Build image
+docker build -t sakka-tennis-website .
 
-### Build Manuel
+# Run container
+docker run -d -p 80:80 --name sakka-tennis sakka-tennis-website
+```
+
+### Features
+- ✅ Multi-stage build for optimized image size (~50 MB)
+- ✅ Nginx with gzip compression
+- ✅ Static asset caching (1 year)
+- ✅ Security headers enabled
+- ✅ SPA routing support
+
+## 📝 Available Scripts
 
 ```bash
-# Build l'image
-docker build -t tennis-website .
+# Development
+pnpm dev          # Start dev server
+pnpm build        # Build for production
+pnpm preview      # Preview production build
 
-# Lancer le conteneur
-docker run -d -p 8080:80 tennis-website
+# Docker
+docker-compose up -d --build    # Build and start
+docker-compose down             # Stop and remove
+docker-compose logs -f          # View logs
 ```
 
-### Arrêter les Conteneurs
+## 🌐 Deployment Options
 
+### Option 1: Docker (Recommended)
+See [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md)
+
+### Option 2: Vercel
 ```bash
-docker-compose down
+vercel --prod
 ```
 
----
-
-## 📁 Structure du Projet
-
-```
-tennisjeannemance/
-├── client/                      # Application frontend
-│   ├── public/                  # Assets statiques
-│   │   └── images/              # Photos (7 images)
-│   ├── src/
-│   │   ├── components/          # Composants React
-│   │   │   ├── Hero.tsx         # Section hero
-│   │   │   ├── Services.tsx     # Services de coaching
-│   │   │   ├── About.tsx        # À propos du coach
-│   │   │   ├── Portfolio.tsx    # Réalisations
-│   │   │   ├── Gallery.tsx      # Galerie photos
-│   │   │   ├── Testimonials.tsx # Témoignages
-│   │   │   ├── Contact.tsx      # Contact
-│   │   │   ├── Navigation.tsx   # Navigation
-│   │   │   └── Footer.tsx       # Footer
-│   │   ├── pages/               # Pages
-│   │   │   ├── Home.tsx         # Page d'accueil
-│   │   │   └── NotFound.tsx     # Page 404
-│   │   ├── hooks/               # React hooks
-│   │   ├── lib/                 # Utilitaires
-│   │   ├── App.tsx              # Composant principal
-│   │   ├── main.tsx             # Point d'entrée React
-│   │   ├── index.css            # Styles globaux
-│   │   └── const.ts             # Constantes
-│   ├── index.html               # Template HTML
-│   ├── package.json             # Dépendances
-│   └── vite.config.ts           # Configuration Vite
-├── Dockerfile                   # Configuration Docker
-├── docker-compose.yml           # Orchestration Docker
-├── nginx.conf                   # Configuration Nginx
-├── .dockerignore                # Exclusions Docker
-├── AMELIORATIONS.md             # Documentation des améliorations
-├── DOCKER_DEPLOYMENT.md         # Guide Docker détaillé
-└── README.md                    # Ce fichier
-```
-
----
-
-## 🎨 Personnalisation
-
-### Modifier le Contenu
-
-Tous les textes et contenus sont dans les fichiers des composants :
-
-- **Hero** → `client/src/components/Hero.tsx`
-- **Services** → `client/src/components/Services.tsx`
-- **À propos** → `client/src/components/About.tsx`
-- **Réalisations** → `client/src/components/Portfolio.tsx`
-- **Galerie** → `client/src/components/Gallery.tsx`
-- **Témoignages** → `client/src/components/Testimonials.tsx`
-- **Contact** → `client/src/components/Contact.tsx`
-
-### Changer le Logo et le Titre
-
-Éditez `client/src/const.ts` :
-
-```typescript
-export const APP_LOGO = "🎾";
-export const APP_TITLE = "Sakka Tennis Coach";
-```
-
-### Ajouter des Photos
-
-1. Placez vos images dans `client/public/images/`
-2. Mettez à jour le tableau `photos` dans `client/src/components/Gallery.tsx`
-
-### Modifier les Couleurs
-
-Les variables de couleurs sont dans `client/src/index.css`
-
----
-
-## 🔧 Commandes Utiles
-
+### Option 3: Netlify
 ```bash
-# Installer les dépendances
-pnpm install
-
-# Démarrer le serveur de développement
-pnpm dev
-
-# Build de production
-pnpm build
-
-# Prévisualiser le build
-pnpm preview
-
-# Vérifier les erreurs TypeScript
-pnpm type-check
-
-# Docker - Build et lancer
-docker-compose up -d --build
-
-# Docker - Arrêter
-docker-compose down
-
-# Docker - Voir les logs
-docker-compose logs -f
+netlify deploy --prod
 ```
 
----
+## 📚 Documentation
 
-## 📱 Responsive Design
+- [AMELIORATIONS.md](./AMELIORATIONS.md) - Complete list of improvements
+- [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md) - Docker deployment guide
+- [GITHUB_UPDATE.md](./GITHUB_UPDATE.md) - GitHub update instructions
 
-Le site est entièrement responsive et optimisé pour :
+## 🎨 Design Features
 
-- **📱 Mobile** - 320px et plus
-- **📱 Tablette** - 768px et plus
-- **💻 Desktop** - 1024px et plus
-
----
-
-## 🌐 Déploiement en Production
-
-### Option 1 : Vercel (Recommandé)
-
-1. Connectez votre dépôt GitHub à Vercel
-2. Configurez le projet :
-   - **Framework Preset** : Vite
-   - **Root Directory** : `client`
-   - **Build Command** : `pnpm build`
-   - **Output Directory** : `dist`
-3. Déployez !
-
-### Option 2 : Netlify
-
-1. Connectez votre dépôt GitHub à Netlify
-2. Configurez :
-   - **Base directory** : `client`
-   - **Build command** : `pnpm build`
-   - **Publish directory** : `client/dist`
-3. Déployez !
-
-### Option 3 : VPS avec Docker
-
-```bash
-# Sur votre serveur
-git clone https://github.com/sakkovic/tennisjeannemance.git
-cd tennisjeannemance
-docker-compose up -d --build
-```
-
-Configurez ensuite Nginx ou un reverse proxy pour pointer vers le port 8080.
-
----
+- **Responsive Design**: Mobile-first approach, works on all devices
+- **Dark Theme**: Professional dark color scheme with green accents
+- **Smooth Animations**: GSAP and Framer Motion for fluid interactions
+- **Optimized Performance**: Lazy loading, code splitting, and caching
+- **Accessibility**: WCAG compliant with semantic HTML
 
 ## 📞 Contact
 
-**Coach Sakka**
+**Mohamed Anis Sakka**
+- 📧 Email: anis.federe@gmail.com
+- 📱 Phone: +1 (514) 812-0621
+- 📍 Location: Montreal, QC, H3C 0J9
 
-- 📍 **Localisation** : Montréal, QC, Canada
-- 📱 **Téléphone** : +1 (514) 812-0621
-- 📧 **Email** : anis.federe@gmail.com
-- 🗣️ **Langues** : Arabe, Anglais, Français
+## 📄 License
 
----
+© 2025 Mohamed Anis Sakka - Professional Tennis Coaching
 
-## 📄 Licence
+## 🤝 Contributing
 
-Ce projet est privé et appartient à Sakka Tennis Coach.
+This is a personal website project. For suggestions or improvements, please contact the owner directly.
 
----
+## 🔄 Recent Updates (November 2025)
 
-## 🤝 Support
-
-Pour toute question ou problème concernant le site web, veuillez contacter directement le coach.
-
----
-
-## 📝 Historique des Versions
-
-### Version 1.0.0 (Novembre 2025)
-
-✨ **Nouvelles Fonctionnalités**
-- Galerie de 7 photos professionnelles
-- Section À propos enrichie avec timeline
-- Expérience internationale ajoutée
-- Configuration Docker complète
-
-🐛 **Corrections**
-- Problèmes de couleurs corrigés
-- Textes invisibles sur fond sombre résolus
-- Navigation améliorée
-
-🎨 **Améliorations**
-- Design responsive optimisé
-- Performance améliorée
-- Documentation complète
+- ✅ Fixed color visibility issues across all sections
+- ✅ Added professional photo gallery (7 images)
+- ✅ Enhanced About section with timeline and highlights
+- ✅ Added international experience showcase
+- ✅ Complete Docker containerization
+- ✅ Optimized Nginx configuration
+- ✅ Multi-language support badges
+- ✅ Improved mobile responsiveness
 
 ---
 
-## 🙏 Remerciements
-
-Merci à tous les joueurs et joueuses qui ont fait confiance à ce coaching de qualité !
-
----
-
-**Dernière mise à jour** : 17 novembre 2025
-
-**Fait avec ❤️ et 🎾 à Montréal**
+**Built with ❤️ in Montreal** | **Powered by React + Tailwind + Docker**
