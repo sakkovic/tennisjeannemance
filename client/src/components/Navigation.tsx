@@ -80,12 +80,12 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white py-6 shadow-sm" /* Always white background */
+      className="fixed top-0 left-0 right-0 z-50 bg-white py-6 shadow-sm" /* Always white background */
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <a href="#" className="flex items-center gap-3 group" onClick={() => scrollToSection('hero')}>
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 transition-transform duration-300 group-hover:scale-110 border-[var(--brand-accent)]">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 group-hover:scale-110 border-[var(--brand-accent)]">
               <img
                 src={profileImage}
                 alt="Sakka Tennis Logo"
@@ -105,14 +105,14 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
                   onClick={() => scrollToSection(item.sectionId)}
                   className="relative group py-2"
                 >
-                  <span className={`text-sm font-medium tracking-wide transition-colors duration-300 ${activeSection === item.sectionId
+                  <span className={`text-sm font-medium tracking-wide ${activeSection === item.sectionId
                     ? 'text-[var(--brand-accent)]'
                     : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
                     }`}>
                     {item.label}
                   </span>
                   <span
-                    className={`absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-300 ${activeSection === item.sectionId ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-50'
+                    className={`absolute bottom-0 left-0 h-0.5 bg-current ${activeSection === item.sectionId ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-50'
                       }`}
                     style={{ color: 'var(--brand-accent)' }}
                   />
