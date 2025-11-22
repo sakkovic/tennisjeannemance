@@ -22,6 +22,31 @@ const Gallery = () => {
 
   const images: GalleryImage[] = [
     {
+      src: '/gallery/anis_anes_tunisia_champion_u15.jpeg',
+      alt: 'Champion de Tunisie U15',
+      description: 'Victoire au championnat de Tunisie U15 avec Anes'
+    },
+    {
+      src: '/gallery/anis_lina_maroc.jpeg',
+      alt: 'Tournoi au Maroc',
+      description: 'Déplacement international au Maroc avec Lina'
+    },
+    {
+      src: '/gallery/anis_selim_benromdhan.jpeg',
+      alt: 'Avec Selim Ben Romdhane',
+      description: 'Entraînement avec Selim Ben Romdhane'
+    },
+    {
+      src: '/gallery/anis_belek_derek.jpeg',
+      alt: 'Session de groupe',
+      description: 'Session d\'entraînement avec Belek et Derek'
+    },
+    {
+      src: '/gallery/anis_soff_sousse.jpeg',
+      alt: 'Tournoi à Sousse',
+      description: 'Compétition au Tennis Club de Sousse'
+    },
+    {
       src: '/gallery/aea2f9fe-4433-4df0-a946-ee9bddaf6b41.jpg',
       alt: 'Entraînement sur court extérieur',
       description: 'Session d\'entraînement avec mes élèves sur court extérieur'
@@ -40,21 +65,6 @@ const Gallery = () => {
       src: '/gallery/8b001041-a0f7-4676-a76b-0beecb6f6f80.jpg',
       alt: 'Rogers Cup à Montréal',
       description: 'Au Rogers Cup à Montréal - Expérience internationale'
-    },
-    {
-      src: '/gallery/9f4b4a6d-d7f3-477a-95f0-d572152292cb.jpg',
-      alt: 'Tennis Club de Sousse',
-      description: 'Avec mes champions au Tennis Club de Sousse'
-    },
-    {
-      src: '/gallery/6dbf86d2-64ea-4913-a102-87f19a32c1dd.jpg',
-      alt: 'Groupe d\'enfants en entraînement',
-      description: 'Session de groupe avec jeunes joueurs'
-    },
-    {
-      src: '/gallery/562e45bd-48d8-4651-a1b8-0badc0f6395d.jpg',
-      alt: 'Coaching individuel',
-      description: 'Cours privé avec une jeune joueuse'
     }
   ];
 
