@@ -81,7 +81,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
     <nav
       ref={ref}
       className="fixed top-0 left-0 right-0 z-[100] py-4 shadow-md"
-      style={{ backgroundColor: '#dc2626' }} /* Force Red-700 */
+      style={{ backgroundColor: '#ffffff' }} /* Force White */
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
@@ -93,7 +93,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="text-2xl font-bold tracking-tighter text-white">
+            <span className="text-2xl font-bold tracking-tighter text-[var(--brand-dark)]">
               Sakka Tennis
             </span>
           </a>
@@ -108,7 +108,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
                 >
                   <span className={`text-sm font-medium tracking-wide ${activeSection === item.sectionId
                     ? 'text-[var(--brand-accent)]'
-                    : 'text-gray-300 hover:text-white'
+                    : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
                     }`}>
                     {item.label}
                   </span>
@@ -134,13 +134,13 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
           </div >
         </div >
 
-        <div className={`md:hidden overflow-hidden bg-red-700 ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        <div className={`md:hidden overflow-hidden bg-white ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           } `}>
-          <div className="px-6 py-4 space-y-4 border-t border-gray-800">
+          <div className="px-6 py-4 space-y-4 border-t border-gray-200">
             {navItems.map((item) => (
               <button
                 key={item.sectionId}
-                className="block w-full text-left nav-item hover:opacity-100 relative group py-2 text-gray-300 hover:text-white"
+                className="block w-full text-left nav-item hover:opacity-100 relative group py-2 text-[var(--brand-dark)] hover:text-[var(--brand-accent)]"
                 onClick={() => scrollToSection(item.sectionId)}
               >
                 {item.label}
