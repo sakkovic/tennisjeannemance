@@ -78,18 +78,26 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   ];
 
   return (
-    <nav ref={ref} className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-300">
-      <div className="max-w-6xl mx-auto py-6">
+    <nav
+      ref={ref}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-6'
+        }`}
+    >
+      <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <a href="#" className="flex items-center gap-3 group" onClick={() => scrollToSection('hero')}>
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--brand-accent)] transition-transform duration-300 group-hover:scale-110">
+            <div className={`w-12 h-12 rounded-full overflow-hidden border-2 transition-transform duration-300 group-hover:scale-110 ${isScrolled ? 'border-[var(--brand-accent)]' : 'border-white'
+              }`}>
               <img
                 src={profileImage}
                 alt="Sakka Tennis Logo"
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="text-2xl font-bold tracking-tighter" style={{ color: 'var(--brand-dark)' }}>
+            <span
+              className="text-2xl font-bold tracking-tighter transition-colors duration-300"
+              style={{ color: isScrolled ? 'var(--brand-dark)' : 'var(--brand-dark)' }}
+            >
               Sakka Tennis
             </span>
           </a>
@@ -104,7 +112,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
                 >
                   <span className={`text-sm font-medium tracking-wide transition-colors duration-300 ${activeSection === item.sectionId
                       ? 'text-[var(--brand-accent)]'
-                      : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
+                      : isScrolled ? 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]' : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
                     }`}>
                     {item.label}
                   </span>
