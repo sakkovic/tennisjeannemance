@@ -126,25 +126,25 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
             >
-              <span className={`w - 6 h - 0.5 transition - all duration - 300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
-              <span className={`w - 6 h - 0.5 transition - all duration - 300 ${isMobileMenuOpen ? 'opacity-0' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
-              <span className={`w - 6 h - 0.5 transition - all duration - 300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w - 6 h - 0.5 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w - 6 h - 0.5 ${isMobileMenuOpen ? 'opacity-0' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w - 6 h - 0.5 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
             </button>
           </div >
         </div >
 
-        <div className={`md:hidden transition - all duration - 300 overflow - hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        <div className={`md:hidden overflow - hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           } `}>
           <div className="px-6 py-4 space-y-4">
             {navItems.map((item) => (
               <button
                 key={item.sectionId}
-                className="block w-full text-left nav-item hover:opacity-100 transition-all duration-300 relative group py-2"
+                className="block w-full text-left nav-item hover:opacity-100 relative group py-2"
                 onClick={() => scrollToSection(item.sectionId)}
               >
                 {item.label}
                 <span
-                  className={`absolute bottom - 0 left - 0 h - 0.5 bg - current transition - all duration - 300 ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
+                  className={`absolute bottom - 0 left - 0 h - 0.5 bg - current ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
                     } `}
                 ></span>
                 <span
