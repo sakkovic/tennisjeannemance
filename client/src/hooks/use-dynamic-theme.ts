@@ -46,36 +46,37 @@ const useDynamicTheme = () => {
     const navButton = nav.querySelector('.nav-button');
 
     const updateNavTheme = (isDark: boolean) => {
-      const duration = 0.3;
-      const colors = isDark ? THEME_COLORS.dark : THEME_COLORS.light;
-      
-      gsap.to(nav, {
-        backgroundColor: colors.navBackground,
-        duration,
-      });
+      // DISABLED: Static navbar design - no dynamic color changes
+      // const duration = 0.3;
+      // const colors = isDark ? THEME_COLORS.dark : THEME_COLORS.light;
 
-      if (navLogo) {
-        gsap.to(navLogo, {
-          color: colors.textColor,
-          duration,
-        });
-      }
+      // gsap.to(nav, {
+      //   backgroundColor: colors.navBackground,
+      //   duration,
+      // });
 
-      navItems.forEach((item) => {
-        gsap.to(item, {
-          color: colors.textColor,
-          duration,
-        });
-      });
+      // if (navLogo) {
+      //   gsap.to(navLogo, {
+      //     color: colors.textColor,
+      //     duration,
+      //   });
+      // }
 
-      if (navButton) {
-        gsap.to(navButton, {
-          backgroundColor: colors.buttonBackground,
-          color: colors.buttonText,
-          borderColor: colors.buttonBorder,
-          duration,
-        });
-      }
+      // navItems.forEach((item) => {
+      //   gsap.to(item, {
+      //     color: colors.textColor,
+      //     duration,
+      //   });
+      // });
+
+      // if (navButton) {
+      //   gsap.to(navButton, {
+      //     backgroundColor: colors.buttonBackground,
+      //     color: colors.buttonText,
+      //     borderColor: colors.buttonBorder,
+      //     duration,
+      //   });
+      // }
     };
 
     SECTIONS.forEach(({ id, isDarkBg }) => {
