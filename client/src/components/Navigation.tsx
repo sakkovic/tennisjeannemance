@@ -80,7 +80,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 right-0 z-[100] bg-[var(--brand-dark)] py-4 shadow-md"
+      className="fixed top-0 left-0 right-0 z-[100] bg-red-700 py-4 shadow-md"
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
@@ -133,7 +133,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
           </div >
         </div >
 
-        <div className={`md:hidden overflow-hidden bg-[var(--brand-dark)] ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        <div className={`md:hidden overflow-hidden bg-red-700 ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           } `}>
           <div className="px-6 py-4 space-y-4 border-t border-gray-800">
             {navItems.map((item) => (
