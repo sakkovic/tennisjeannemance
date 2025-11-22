@@ -80,7 +80,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white py-6 shadow-sm"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white py-6 shadow-sm" /* Always white background */
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
