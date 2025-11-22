@@ -28,7 +28,7 @@ const Portfolio = () => {
       tags: ["Youth Development", "Competitive Training", "Tunisia"],
       background: "linear-gradient(135deg, var(--chart-4) 0%, var(--destructive) 100%)",
       isNDA: false,
-      image: placeholderProject
+      image: "/gallery/anis_anes_tunisia_champion_u15.jpeg"
     },
     {
       id: 2,
@@ -38,7 +38,7 @@ const Portfolio = () => {
       tags: ["Team Management", "Tournament Strategy", "Youth Coaching"],
       background: "linear-gradient(135deg, var(--chart-2) 0%, var(--brand-dark) 100%)",
       isNDA: false,
-      image: placeholderProject
+      image: "/gallery/teamleadtcmo.jpg"
     },
     {
       id: 3,
@@ -156,7 +156,7 @@ const Portfolio = () => {
                         <motion.div
                           className="h-full bg-white rounded-full"
                           initial={{ width: '0%' }}
-                          animate={{ 
+                          animate={{
                             width: index === currentSlide ? `${slideProgress}%` : index < currentSlide ? '100%' : '0%'
                           }}
                           transition={{ duration: 0.1 }}
@@ -173,7 +173,7 @@ const Portfolio = () => {
                 >
                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
-                
+
                 <button
                   onClick={nextSlide}
                   className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 md:p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
@@ -196,7 +196,7 @@ const Portfolio = () => {
                     <p className="text-sm mb-6 text-white/80 leading-relaxed">
                       {portfolioSlides[currentSlide].description}
                     </p>
-                    
+
                     <div className="flex flex-wrap gap-2 mb-6">
                       {portfolioSlides[currentSlide].tags.slice(0, 3).map((tag, index) => (
                         <span key={index} className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs">
@@ -219,8 +219,8 @@ const Portfolio = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.6, delay: 0.4 }}
                     >
-                      <img 
-                        src={placeholderProject} 
+                      <img
+                        src={portfolioSlides[currentSlide].image}
                         alt="Project Preview"
                         className="w-full h-full object-cover"
                       />
@@ -233,9 +233,8 @@ const Portfolio = () => {
                     <button
                       key={index}
                       onClick={() => goToSlide(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentSlide ? 'bg-white' : 'bg-white/40'
-                      }`}
+                      className={`w-2 h-2 rounded-full transition-all ${index === currentSlide ? 'bg-white' : 'bg-white/40'
+                        }`}
                     />
                   ))}
                 </div>

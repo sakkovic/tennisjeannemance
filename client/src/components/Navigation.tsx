@@ -1,17 +1,20 @@
 import { forwardRef, useState, useEffect } from 'react';
-import placeholderPerson from '../assets/placeholder-person.webp';
+import { Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import profileImage from '../assets/profilhero.jpg';
 
 const Navigation = forwardRef<HTMLElement>((props, ref) => {
   const [activeSection, setActiveSection] = useState('hero');
-  const [clickedSection, setClickedSection] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [clickedSection, setClickedSection] = useState<string | null>(null);
 
   const scrollToSection = (sectionId: string) => {
     setClickedSection(sectionId);
     setIsMobileMenuOpen(false);
     setTimeout(() => setClickedSection(null), 600);
 
-    const section = document.querySelector(`[data-section="${sectionId}"]`);
+    const section = document.querySelector(`[data - section= "${sectionId}"]`);
     if (section) {
       section.scrollIntoView({
         behavior: 'smooth',
@@ -77,42 +80,42 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   return (
     <nav ref={ref} className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-all duration-300">
       <div className="max-w-6xl mx-auto py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden relative">
-              <img src={placeholderPerson} alt="NAME Doe" className="w-full h-full object-cover" />
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+        <div className="flex items-center justify-between h-20">
+          <a href="#" className="flex items-center gap-3 group" onClick={() => scrollToSection('hero')}>
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--brand-accent)] transition-transform duration-300 group-hover:scale-110">
+              <img
+                src={profileImage}
+                alt="Sakka Tennis Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <button
-              className="nav-logo font-medium tracking-wide transition-colors duration-300 cursor-pointer"
-              onClick={() => scrollToSection('hero')}
-            >
-              SAKKA TENNIS
-            </button>
-          </div>
+            <span className="text-2xl font-bold tracking-tighter" style={{ color: 'var(--brand-dark)' }}>
+              Sakka Tennis
+            </span>
+          </a>
 
           <div className="flex items-center space-x-8">
             <div className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
                 <button
                   key={item.sectionId}
-                  className="nav-item hover:opacity-100 transition-all duration-300 relative group"
                   onClick={() => scrollToSection(item.sectionId)}
+                  className="relative group py-2"
                 >
-                  {item.label}
+                  <span className={`text-sm font-medium tracking-wide transition-colors duration-300 ${activeSection === item.sectionId
+                      ? 'text-[var(--brand-accent)]'
+                      : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
+                    }`}>
+                    {item.label}
+                  </span>
                   <span
-                    className={`absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-300 ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
+                    className={`absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-300 ${activeSection === item.sectionId ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-50'
                       }`}
-                  ></span>
-                  <span
-                    className={`absolute bottom-0 left-0 h-0.5 bg-current ${clickedSection === item.sectionId
-                      ? 'animate-drawUnderline'
-                      : 'w-0'
-                      }`}
-                  ></span>
+                    style={{ color: 'var(--brand-accent)' }}
+                  />
                 </button>
               ))}
-            </div>
+            </div >
 
             <button
               className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 rounded"
@@ -120,15 +123,15 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
             >
-              <span className={`w-6 h-0.5 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
-              <span className={`w-6 h-0.5 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
-              <span className={`w-6 h-0.5 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w - 6 h - 0.5 transition - all duration - 300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w - 6 h - 0.5 transition - all duration - 300 ${isMobileMenuOpen ? 'opacity-0' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w - 6 h - 0.5 transition - all duration - 300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
             </button>
-          </div>
-        </div>
+          </div >
+        </div >
 
-        <div className={`md:hidden transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}>
+        <div className={`md:hidden transition - all duration - 300 overflow - hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          } `}>
           <div className="px-6 py-4 space-y-4">
             {navItems.map((item) => (
               <button
@@ -138,21 +141,21 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
               >
                 {item.label}
                 <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-300 ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
-                    }`}
+                  className={`absolute bottom - 0 left - 0 h - 0.5 bg - current transition - all duration - 300 ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
+                    } `}
                 ></span>
                 <span
-                  className={`absolute bottom-0 left-0 h-0.5 bg-current ${clickedSection === item.sectionId
+                  className={`absolute bottom - 0 left - 0 h - 0.5 bg - current ${clickedSection === item.sectionId
                     ? 'animate-drawUnderline'
                     : 'w-0'
-                    }`}
+                    } `}
                 ></span>
               </button>
             ))}
           </div>
         </div>
-      </div>
-    </nav>
+      </div >
+    </nav >
   );
 });
 

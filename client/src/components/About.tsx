@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import profileImage from '../assets/_A100156.jpg';
-import diplomaImage from '../assets/instructor_diplome_sakka_med_anis.png';
 import { Award, Globe, Users, Trophy } from 'lucide-react';
 
 const About = () => {
@@ -12,9 +11,8 @@ const About = () => {
     },
     {
       icon: Award,
-      title: "Certified Instructor",
-      description: "Tennis Instructor Certification",
-      image: diplomaImage
+      title: "Meilleur Classement",
+      description: "Handicap 0 (classement européen)"
     },
     {
       icon: Users,
@@ -119,14 +117,7 @@ const About = () => {
               >
                 <highlight.icon className="w-8 h-8 mb-4" style={{ color: 'var(--brand-accent)' }} />
                 <h4 className="font-semibold mb-2 text-white">{highlight.title}</h4>
-                <p className="text-sm text-white/70 mb-3">{highlight.description}</p>
-                {/* @ts-ignore */}
-                {highlight.image && (
-                  <div className="mt-2 rounded-lg overflow-hidden border border-white/20">
-                    {/* @ts-ignore */}
-                    <img src={highlight.image} alt={highlight.title} className="w-full h-auto object-cover" />
-                  </div>
-                )}
+                <p className="text-sm text-white/70">{highlight.description}</p>
               </div>
             ))}
           </div>
