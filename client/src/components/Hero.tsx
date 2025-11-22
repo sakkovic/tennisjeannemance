@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import heroBg from '../assets/profilhero.jpg';
+import heroBg from '../assets/front _landing_page_image.jpeg';
 
 const Hero = () => {
   const scrollToContact = () => {
