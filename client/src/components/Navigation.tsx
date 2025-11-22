@@ -14,7 +14,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
     setIsMobileMenuOpen(false);
     setTimeout(() => setClickedSection(null), 600);
 
-    const section = document.querySelector(`[data - section= "${sectionId}"]`);
+    const section = document.querySelector(`[data-section="${sectionId}"]`);
     if (section) {
       section.scrollIntoView({
         behavior: 'smooth',
@@ -80,7 +80,8 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 right-0 z-50 bg-white py-6 shadow-sm" /* Always white background */
+      className="fixed top-0 left-0 right-0 z-50 py-6 shadow-sm"
+      style={{ backgroundColor: '#ffffff' }}
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
@@ -126,14 +127,14 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
             >
-              <span className={`w - 6 h - 0.5 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
-              <span className={`w - 6 h - 0.5 ${isMobileMenuOpen ? 'opacity-0' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
-              <span className={`w - 6 h - 0.5 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w-6 h-0.5 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w-6 h-0.5 ${isMobileMenuOpen ? 'opacity-0' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
+              <span className={`w-6 h-0.5 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''} `} style={{ backgroundColor: 'var(--brand-accent)' }}></span>
             </button>
           </div >
         </div >
 
-        <div className={`md:hidden overflow - hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        <div className={`md:hidden overflow-hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           } `}>
           <div className="px-6 py-4 space-y-4">
             {navItems.map((item) => (
@@ -144,7 +145,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
               >
                 {item.label}
                 <span
-                  className={`absolute bottom - 0 left - 0 h - 0.5 bg - current ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
+                  className={`absolute bottom-0 left-0 h-0.5 bg-current ${activeSection === item.sectionId ? 'w-full opacity-60' : 'w-0 opacity-0'
                     } `}
                 ></span>
                 <span
