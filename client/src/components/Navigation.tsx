@@ -92,10 +92,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <span
-              className="text-2xl font-bold tracking-tighter transition-colors duration-300"
-              style={{ color: isScrolled ? 'var(--brand-dark)' : 'var(--brand-dark)' }}
-            >
+            <span className="text-2xl font-bold tracking-tighter text-[var(--brand-dark)]">
               Sakka Tennis
             </span>
           </a>
