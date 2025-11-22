@@ -80,7 +80,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent py-6"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[var(--brand-light)] py-6"
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
@@ -109,8 +109,8 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
                   className="relative group py-2"
                 >
                   <span className={`text-sm font-medium tracking-wide transition-colors duration-300 ${activeSection === item.sectionId
-                      ? 'text-[var(--brand-accent)]'
-                      : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
+                    ? 'text-[var(--brand-accent)]'
+                    : 'text-[var(--brand-dark)] hover:text-[var(--brand-accent)]'
                     }`}>
                     {item.label}
                   </span>
