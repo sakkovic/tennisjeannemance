@@ -1,6 +1,7 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Copy } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 import Map from './Map';
 
@@ -43,9 +44,21 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="text-sm text-slate-600 font-bold uppercase tracking-wider">Email</p>
-                    <a href="mailto:anis.federe@gmail.com" className="text-lg font-bold text-slate-900 hover:text-emerald-700 transition-colors">
-                      anis.federe@gmail.com
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a href="mailto:anis.federe@gmail.com" className="text-lg font-bold text-slate-900 hover:text-emerald-700 transition-colors">
+                        anis.federe@gmail.com
+                      </a>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText("anis.federe@gmail.com");
+                          toast.success("Email copied to clipboard!");
+                        }}
+                        className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
+                        title="Copy email"
+                      >
+                        <Copy size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -122,13 +135,50 @@ const Contact = () => {
             className="glass-panel p-8 rounded-2xl shadow-xl bg-white/90"
           >
             <h3 className="text-2xl font-bold mb-6 text-slate-800">Send a Message</h3>
-            <form className="space-y-6">
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+
+                // Show loading state if you had one, or just toast
+                const loadingToast = toast.loading("Sending message...");
+
+                try {
+                  const response = await fetch("https://formsubmit.co/ajax/anis.federe@gmail.com", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                      'Accept': 'application/json'
+                    }
+                  });
+
+                  if (response.ok) {
+                    toast.dismiss(loadingToast);
+                    toast.success("Message sent successfully! I will get back to you soon.");
+                    (e.target as HTMLFormElement).reset();
+                  } else {
+                    throw new Error("Failed to send");
+                  }
+                } catch (err) {
+                  toast.dismiss(loadingToast);
+                  toast.error("Something went wrong. Please try again or email me directly.");
+                  console.error(err);
+                }
+              }}
+              className="space-y-6"
+            >
+              <input type="hidden" name="_subject" value="New Inquiry from Website" />
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="_template" value="table" />
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-700">Name</label>
                   <input
                     type="text"
                     id="name"
+                    name="name"
+                    required
                     className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                     placeholder="Your Name"
                   />
@@ -138,6 +188,8 @@ const Contact = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    required
                     className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                     placeholder="your@email.com"
                   />
@@ -148,12 +200,14 @@ const Contact = () => {
                 <label htmlFor="subject" className="text-sm font-medium text-slate-700">Subject</label>
                 <select
                   id="subject"
+                  name="subject"
+                  required
                   className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none"
                 >
                   <option value="">Select a topic</option>
-                  <option value="private">Private Coaching</option>
-                  <option value="group">Group Session</option>
-                  <option value="other">Other Inquiry</option>
+                  <option value="Private Coaching">Private Coaching</option>
+                  <option value="Group Session">Group Session</option>
+                  <option value="Other Inquiry">Other Inquiry</option>
                 </select>
               </div>
 
@@ -161,19 +215,27 @@ const Contact = () => {
                 <label htmlFor="message" className="text-sm font-medium text-slate-700">Message</label>
                 <textarea
                   id="message"
+                  name="message"
+                  required
                   rows={4}
                   className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all resize-none"
                   placeholder="How can I help you?"
                 ></textarea>
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center space-x-2 group"
-              >
-                <span>Send Message</span>
-                <Send size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              <div className="space-y-4">
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 flex items-center justify-center space-x-2 group"
+                >
+                  <span>Send Message</span>
+                  <Send size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <p className="text-xs text-center text-slate-500">
+                  Powered by FormSubmit. <br />
+                  <span className="font-bold text-emerald-600">IMPORTANT:</span> For the first message, you (Anis) will receive an activation email. Please click it to enable the form.
+                </p>
+              </div>
             </form>
           </motion.div>
         </div>
