@@ -6,7 +6,7 @@ import Map from './Map';
 
 const Contact = () => {
   return (
-    <section id="contact" className="py-20 relative overflow-hidden">
+    <section id="contact" className="py-16 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-50 to-white opacity-50 -z-10"></div>
 
       <div className="container mx-auto px-4">

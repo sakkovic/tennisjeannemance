@@ -21,7 +21,7 @@ const ReservationsTeaser = () => {
     };
 
     return (
-        <section className="py-12 px-4 md:px-6 max-w-7xl mx-auto" id="reservations-teaser">
+        <section className="py-10 px-4 md:px-6 max-w-7xl mx-auto" id="reservations-teaser">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

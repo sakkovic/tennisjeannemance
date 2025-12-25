@@ -54,7 +54,7 @@ const Pricing = () => {
     ];
 
     return (
-        <section id="pricing" className="py-20 bg-slate-50 relative">
+        <section id="pricing" className="py-16 bg-slate-50 relative">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

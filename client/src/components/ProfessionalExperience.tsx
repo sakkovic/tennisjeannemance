@@ -23,7 +23,7 @@ const ProfessionalExperience = () => {
     ];
 
     return (
-        <section className="py-16 px-6 bg-[var(--background)]">
+        <section className="py-12 px-6 bg-[var(--background)]">
             <div className="max-w-6xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}

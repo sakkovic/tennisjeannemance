@@ -37,7 +37,7 @@ const FAQ = () => {
     };
 
     return (
-        <section id="faq" className="py-20 bg-white">
+        <section id="faq" className="py-16 bg-white">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,7 @@ const FAQ = () => {
                     </div>
                 </div>
 
-                <motion.div
+                {/* <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -164,7 +164,7 @@ const FAQ = () => {
                             Contact Me <span aria-hidden="true">&rarr;</span>
                         </a>
                     </div>
-                </motion.div>
+                </motion.div> */}
             </div>
         </section>
     );

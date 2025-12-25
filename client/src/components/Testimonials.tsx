@@ -42,7 +42,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="pt-32 px-6">
+    <section className="pt-16 px-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-normal mb-12">What Players Say About Me</h2>
         <div className="columns-1 md:columns-2 gap-8 space-y-8">
@@ -59,8 +59,8 @@ const Testimonials = () => {
                 "{testimonial.quote}"
               </blockquote>
               <div className="flex items-center">
-                <img 
-                  src={testimonial.avatar} 
+                <img
+                  src={testimonial.avatar}
                   alt={testimonial.name}
                   className="w-12 h-12 rounded-full mr-4"
                 />

@@ -69,7 +69,7 @@ const Gallery = () => {
   ];
 
   return (
-    <section id="gallery" className="section-dark px-6 py-20">
+    <section id="gallery" className="section-dark px-6 py-16">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-end mb-12">
           <div>
