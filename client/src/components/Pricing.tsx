@@ -1,8 +1,10 @@
 import React from 'react';
 import { Check, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLocation } from 'wouter';
 
 const Pricing = () => {
+    const [_, setLocation] = useLocation();
     const plans = [
         {
             name: "Private Session",
@@ -95,10 +97,7 @@ const Pricing = () => {
                                 </div>
 
                                 <button
-                                    onClick={() => {
-                                        const section = document.querySelector('[data-section="reservations"]');
-                                        section?.scrollIntoView({ behavior: 'smooth' });
-                                    }}
+                                    onClick={() => setLocation('/reservations')}
                                     className={`w-full py-3 rounded-lg font-semibold transition-colors mb-8 ${plan.popular
                                         ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                                         : 'bg-slate-100 text-slate-800 hover:bg-slate-200'

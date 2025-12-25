@@ -1,6 +1,7 @@
 import { forwardRef, useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'wouter';
 import profileImage from '../assets/profilhero.jpg';
 
 const Navigation = forwardRef<HTMLElement>((props, ref) => {
@@ -8,11 +9,32 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [clickedSection, setClickedSection] = useState<string | null>(null);
+  const [location, setLocation] = useLocation();
 
   const scrollToSection = (sectionId: string) => {
     setClickedSection(sectionId);
     setIsMobileMenuOpen(false);
     setTimeout(() => setClickedSection(null), 600);
+
+    if (sectionId === 'reservations') {
+      setLocation('/reservations');
+      return;
+    }
+
+    if (location !== '/') {
+      setLocation('/');
+      // We need to wait for navigation to complete before scrolling
+      // Using a small timeout or checking on mount would be ideal, 
+      // but for simplicity we can use a hash navigation or just let the user scroll manually for now
+      // A better approach is to pass state or use a hash
+      setTimeout(() => {
+        const section = document.querySelector(`[data-section="${sectionId}"]`);
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return;
+    }
 
     const section = document.querySelector(`[data-section="${sectionId}"]`);
     if (section) {
@@ -68,6 +90,13 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Update active section based on route
+  useEffect(() => {
+    if (location === '/reservations') {
+      setActiveSection('reservations');
+    }
+  }, [location]);
+
   const navItems = [
     { label: 'Achievements', sectionId: 'portfolio' },
     { label: 'Pricing', sectionId: 'pricing' },
@@ -86,7 +115,15 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
-          <a href="#" className="flex items-center gap-3 group" onClick={() => scrollToSection('hero')}>
+          <a
+            href="#"
+            className="flex items-center gap-3 group"
+            onClick={(e) => {
+              e.preventDefault();
+              if (location !== '/') setLocation('/');
+              scrollToSection('hero');
+            }}
+          >
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 group-hover:scale-110 border-[var(--brand-accent)]">
               <img
                 src={profileImage}

@@ -27,7 +27,8 @@
   --card-foreground: 222.2 84% 4.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
-  --primary: 158 93% 30%; /* Emerald 600 */
+  --primary: 158 93% 30%;
+  /* Emerald 600 */
   --primary-foreground: 210 40% 98%;
   --secondary: 210 40% 96.1%;
   --secondary-foreground: 222.2 47.4% 11.2%;
@@ -151,18 +152,7 @@ h6 {
   color: var(--brand-dark);
 }
 
-/* Corrections pour les éléments avec des couleurs inline */
-[style*="var(--brand-dark)"] {
-  color: var(--brand-dark) !important;
-}
 
-[style*="var(--brand-light)"] {
-  color: var(--brand-light) !important;
-}
-
-[style*="var(--brand-accent)"] {
-  color: var(--brand-accent) !important;
-}
 
 /* Animations */
 @keyframes float {

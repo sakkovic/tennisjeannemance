@@ -24,8 +24,8 @@ const Contact = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Contact Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-12">
+          {/* Contact Info & Locations */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -111,11 +111,6 @@ const Contact = () => {
                 </li>
               </ul>
             </div>
-
-            {/* Map */}
-            <div className="rounded-2xl overflow-hidden shadow-lg h-80 w-full relative z-0 border border-slate-200">
-              <Map />
-            </div>
           </motion.div>
 
           {/* Contact Form */}
@@ -182,6 +177,17 @@ const Contact = () => {
             </form>
           </motion.div>
         </div>
+
+        {/* Map Full Width */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="rounded-2xl overflow-hidden shadow-lg h-96 w-full relative z-0 border border-slate-200"
+        >
+          <Map />
+        </motion.div>
       </div>
     </section>
   );

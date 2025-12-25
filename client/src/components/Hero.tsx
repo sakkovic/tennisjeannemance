@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useLocation } from 'wouter';
 import heroBg from '../assets/front _landing_page_image.jpeg';
 
 const Hero = () => {
+  const [_, setLocation] = useLocation();
   const scrollToContact = () => {
     const contactSection = document.getElementById('contact');
     if (contactSection) {
@@ -44,7 +46,7 @@ const Hero = () => {
             </button>
             <button
               className="text-lg underline underline-offset-4 transition-colors duration-200 flex items-center gap-2 text-[var(--brand-dark)] hover:text-[var(--brand-accent)]"
-              onClick={scrollToContact}
+              onClick={() => setLocation('/reservations')}
             >
               or book a lesson
               <ArrowRight className="w-5 h-5" />
