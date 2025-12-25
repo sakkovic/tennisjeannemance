@@ -10,6 +10,7 @@ import Testimonials from './components/Testimonials';
 import About from './components/About';
 import Gallery from './components/Gallery';
 import Pricing from './components/Pricing';
+import Reservations from './components/Reservations';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -46,6 +47,9 @@ function App() {
             </div>
             <div data-section="pricing" className="section-light">
               <Pricing />
+            </div>
+            <div data-section="reservations" className="section-light">
+              <Reservations />
             </div>
             <div data-section="faq" className="section-light">
               <FAQ />

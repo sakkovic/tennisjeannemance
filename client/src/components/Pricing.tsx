@@ -94,10 +94,15 @@ const Pricing = () => {
                                     <span className="text-slate-500 ml-2">{plan.period}</span>
                                 </div>
 
-                                <button className={`w-full py-3 rounded-lg font-semibold transition-colors mb-8 ${plan.popular
+                                <button
+                                    onClick={() => {
+                                        const section = document.querySelector('[data-section="reservations"]');
+                                        section?.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className={`w-full py-3 rounded-lg font-semibold transition-colors mb-8 ${plan.popular
                                         ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                                         : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
-                                    }`}>
+                                        }`}>
                                     Book Now
                                 </button>
 

@@ -71,6 +71,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   const navItems = [
     { label: 'Achievements', sectionId: 'portfolio' },
     { label: 'Pricing', sectionId: 'pricing' },
+    { label: 'Reservations', sectionId: 'reservations' },
     { label: 'About', sectionId: 'about' },
     { label: 'Gallery', sectionId: 'gallery' },
     { label: 'FAQ', sectionId: 'faq' },
