@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { motion } from 'framer-motion';
 
 interface GalleryImage {
   src: string;
@@ -70,7 +71,13 @@ const Gallery = () => {
 
   return (
     <section id="gallery" className="section-dark px-6 py-16">
-      <div className="max-w-7xl mx-auto">
+      <motion.div
+        className="max-w-7xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="flex justify-between items-end mb-12">
           <div>
             <h2 className="text-4xl md:text-5xl font-medium mb-4 text-white">
@@ -141,7 +148,7 @@ const Gallery = () => {
             <ChevronRight size={24} />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Modal pour afficher l'image en grand */}
       {selectedImage && (

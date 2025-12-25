@@ -128,8 +128,9 @@ const Portfolio = () => {
               <motion.div
                 key={currentSlide}
                 custom={direction}
-                className="relative h-full rounded-3xl overflow-hidden group cursor-pointer"
+                className="relative h-full rounded-3xl overflow-hidden group cursor-pointer shadow-2xl"
                 style={{ background: portfolioSlides[currentSlide].background }}
+                whileHover={{ scale: 1.02 }}
                 initial="initial"
                 animate="animate"
                 exit="exit"

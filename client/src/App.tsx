@@ -8,6 +8,7 @@ import Navigation from './components/Navigation';
 import Home from './components/Home';
 import Reservations from './components/Reservations';
 import Footer from './components/Footer';
+import MobileBookButton from './components/MobileBookButton';
 import BackToTop from './components/BackToTop';
 import useDynamicTheme from './hooks/use-dynamic-theme';
 
@@ -37,6 +38,7 @@ function App() {
             </main>
 
             <Footer />
+            <MobileBookButton />
             <BackToTop />
           </div>
         </TooltipProvider>

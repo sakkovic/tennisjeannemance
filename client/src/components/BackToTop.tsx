@@ -30,7 +30,7 @@ const BackToTop = () => {
     <AnimatePresence>
       {showBackToTop && (
         <motion.button
-          className="fixed bottom-8 right-8 bg-black hover:bg-gray-800 text-white p-3 rounded-full shadow-lg z-50"
+          className="fixed bottom-8 right-8 bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-full shadow-lg z-50"
           onClick={scrollToTop}
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
