@@ -116,6 +116,7 @@ async function startServer() {
   interface User {
     id: string;
     username: string;
+    role: 'user' | 'admin';
     lastSeen: string;
   }
 
@@ -158,15 +159,22 @@ async function startServer() {
     if (!username) return res.status(400).json({ error: "Username required" });
 
     let user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+
+    // Simple Admin Logic: If username is "Anis", they are admin
+    const role = username.toLowerCase() === 'anis' ? 'admin' : 'user';
+
     if (!user) {
       user = {
         id: Math.random().toString(36).substring(7),
         username,
+        role,
         lastSeen: new Date().toISOString()
       };
       users.push(user);
     } else {
       user.lastSeen = new Date().toISOString();
+      // Ensure role is updated if they log in again
+      user.role = role;
     }
     res.json(user);
   });

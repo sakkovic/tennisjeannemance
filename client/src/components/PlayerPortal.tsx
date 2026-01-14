@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 interface User {
     id: string;
     username: string;
+    role: 'user' | 'admin';
     lastSeen: string;
     isOnline?: boolean;
 }
@@ -266,11 +267,17 @@ const PlayerPortal = () => {
                     {/* My Profile */}
                     <div className="p-4 bg-white border-b border-slate-100 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold relative">
                                 {currentUser.username[0].toUpperCase()}
+                                {currentUser.role === 'admin' && (
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-yellow-900 font-bold" title="Admin">★</span>
+                                )}
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-900">{currentUser.username}</h3>
+                                <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                                    {currentUser.username}
+                                    {currentUser.role === 'admin' && <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Admin</span>}
+                                </h3>
                                 <p className="text-emerald-600 text-xs font-medium flex items-center gap-1">
                                     <span className="w-2 h-2 bg-emerald-500 rounded-full"></span> Online
                                 </p>
@@ -563,10 +570,16 @@ const PlayerPortal = () => {
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold text-xs">
+                                                    <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold text-xs relative">
                                                         {user.username[0].toUpperCase()}
+                                                        {user.role === 'admin' && (
+                                                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border border-white flex items-center justify-center text-[6px] text-yellow-900 font-bold">★</span>
+                                                        )}
                                                     </div>
-                                                    <span className="font-medium text-slate-900">{user.username}</span>
+                                                    <span className="font-medium text-slate-900 flex items-center gap-2">
+                                                        {user.username}
+                                                        {user.role === 'admin' && <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1 py-0.5 rounded font-bold uppercase">Admin</span>}
+                                                    </span>
                                                 </div>
                                                 {selectedUsersForChat.includes(user.id) && (
                                                     <Check size={18} className="text-emerald-600" />
