@@ -30,7 +30,7 @@ const Gallery = () => {
     {
       src: '/gallery/anis_lina_maroc.jpeg',
       alt: 'Tournoi au Maroc',
-      description: 'Déplacement international au Maroc avec Lina'
+      description: 'Sparing session avec la championne du Maroc Lina'
     },
     {
       src: '/gallery/anis_selim_benromdhan.jpeg',
