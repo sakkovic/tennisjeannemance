@@ -116,6 +116,11 @@ async function startServer() {
   interface User {
     id: string;
     username: string;
+    email: string;
+    password?: string; // In a real app, hash this!
+    phone?: string;
+    level?: string;
+    avatar?: string; // Base64 or URL
     role: 'user' | 'admin';
     lastSeen: string;
   }
@@ -153,30 +158,76 @@ async function startServer() {
   let conversations: Conversation[] = [];
   let messages: Message[] = [];
 
-  // 1. Login / Register
-  app.post("/api/chat/login", express.json(), (req, res) => {
-    const { username } = req.body;
-    if (!username) return res.status(400).json({ error: "Username required" });
+  // 1. Register
+  app.post("/api/chat/register", express.json({ limit: '10mb' }), (req, res) => {
+    const { username, email, password, phone, level, avatar } = req.body;
 
-    let user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "Username, email, and password are required" });
+    }
 
-    // Simple Admin Logic: If username is "Anis", they are admin
+    if (users.find(u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === email.toLowerCase())) {
+      return res.status(409).json({ error: "User already exists" });
+    }
+
+    // Simple Admin Logic
     const role = username.toLowerCase() === 'anis' ? 'admin' : 'user';
 
+    const newUser: User = {
+      id: Math.random().toString(36).substring(7),
+      username,
+      email,
+      password, // Storing plain text for prototype ONLY
+      phone,
+      level,
+      avatar,
+      role,
+      lastSeen: new Date().toISOString()
+    };
+
+    users.push(newUser);
+
+    // Return user without password
+    const { password: _, ...userSafe } = newUser;
+    res.json(userSafe);
+  });
+
+  // 2. Login
+  app.post("/api/chat/login", express.json(), (req, res) => {
+    const { identifier, password } = req.body; // identifier can be username or email
+    if (!identifier || !password) return res.status(400).json({ error: "Credentials required" });
+
+    const user = users.find(u =>
+      (u.username.toLowerCase() === identifier.toLowerCase() || u.email.toLowerCase() === identifier.toLowerCase()) &&
+      u.password === password
+    );
+
     if (!user) {
-      user = {
-        id: Math.random().toString(36).substring(7),
-        username,
-        role,
-        lastSeen: new Date().toISOString()
-      };
-      users.push(user);
-    } else {
-      user.lastSeen = new Date().toISOString();
-      // Ensure role is updated if they log in again
-      user.role = role;
+      return res.status(401).json({ error: "Invalid credentials" });
     }
-    res.json(user);
+
+    user.lastSeen = new Date().toISOString();
+
+    const { password: _, ...userSafe } = user;
+    res.json(userSafe);
+  });
+
+  // 3. Update Profile
+  app.put("/api/chat/users/:id", express.json({ limit: '10mb' }), (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+
+    const userIndex = users.findIndex(u => u.id === id);
+    if (userIndex === -1) return res.status(404).json({ error: "User not found" });
+
+    // Prevent changing id or role via this endpoint for safety
+    delete updates.id;
+    delete updates.role;
+
+    users[userIndex] = { ...users[userIndex], ...updates };
+
+    const { password: _, ...userSafe } = users[userIndex];
+    res.json(userSafe);
   });
 
   // 2. Get Users (for creating chats)

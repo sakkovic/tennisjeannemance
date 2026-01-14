@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Calendar, User, Check, X, Clock, Plus, Users, MessageSquare, LogOut, Search } from 'lucide-react';
+import { Send, Calendar, User as UserIcon, Check, X, Clock, Plus, Users, MessageSquare, LogOut, Search, Camera, Edit2, Mail, Phone, Trophy, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 // --- Types ---
 interface User {
     id: string;
     username: string;
+    email: string;
+    phone?: string;
+    level?: string;
+    avatar?: string;
     role: 'user' | 'admin';
     lastSeen: string;
     isOnline?: boolean;
@@ -47,6 +51,7 @@ const PlayerPortal = () => {
         const saved = localStorage.getItem('chat_user_data');
         return saved ? JSON.parse(saved) : null;
     });
+    const [isRegistering, setIsRegistering] = useState(false);
 
     // Data State
     const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -58,6 +63,7 @@ const PlayerPortal = () => {
     const [inputText, setInputText] = useState('');
     const [showNewChatModal, setShowNewChatModal] = useState(false);
     const [showProposalModal, setShowProposalModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
     const [proposalDate, setProposalDate] = useState('');
     const [proposalTime, setProposalTime] = useState('');
     const [selectedUsersForChat, setSelectedUsersForChat] = useState<string[]>([]);
@@ -110,13 +116,14 @@ const PlayerPortal = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
-        const username = formData.get('username') as string;
+        const identifier = formData.get('identifier') as string;
+        const password = formData.get('password') as string;
 
         try {
             const res = await fetch('/api/chat/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username })
+                body: JSON.stringify({ identifier, password })
             });
 
             if (res.ok) {
@@ -124,9 +131,97 @@ const PlayerPortal = () => {
                 setCurrentUser(user);
                 localStorage.setItem('chat_user_data', JSON.stringify(user));
                 toast.success(`Welcome back, ${user.username}!`);
+            } else {
+                const err = await res.json();
+                toast.error(err.error || "Login failed");
             }
         } catch (error) {
             toast.error("Login failed");
+        }
+    };
+
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+        const data: any = Object.fromEntries(formData.entries());
+
+        // Handle Avatar File
+        const fileInput = (e.target as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                data.avatar = reader.result as string;
+                await submitRegister(data);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            await submitRegister(data);
+        }
+    };
+
+    const submitRegister = async (data: any) => {
+        try {
+            const res = await fetch('/api/chat/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                setCurrentUser(user);
+                localStorage.setItem('chat_user_data', JSON.stringify(user));
+                toast.success(`Welcome, ${user.username}!`);
+            } else {
+                const err = await res.json();
+                toast.error(err.error || "Registration failed");
+            }
+        } catch (error) {
+            toast.error("Registration failed");
+        }
+    };
+
+    const handleUpdateProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const formData = new FormData(e.target as HTMLFormElement);
+        const data: any = Object.fromEntries(formData.entries());
+
+        // Handle Avatar File
+        const fileInput = (e.target as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                data.avatar = reader.result as string;
+                await submitUpdate(data);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            await submitUpdate(data);
+        }
+    };
+
+    const submitUpdate = async (data: any) => {
+        if (!currentUser) return;
+        try {
+            const res = await fetch(`/api/chat/users/${currentUser.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                const updatedUser = await res.json();
+                setCurrentUser(updatedUser);
+                localStorage.setItem('chat_user_data', JSON.stringify(updatedUser));
+                setShowProfileModal(false);
+                toast.success("Profile updated!");
+            } else {
+                toast.error("Update failed");
+            }
+        } catch (error) {
+            toast.error("Update failed");
         }
     };
 
@@ -216,6 +311,34 @@ const PlayerPortal = () => {
         }
     };
 
+    // --- Render Helpers ---
+    const Avatar = ({ user, size = 'md', showStatus = false }: { user: User | { username: string, avatar?: string, role?: string }, size?: 'sm' | 'md' | 'lg' | 'xl', showStatus?: boolean }) => {
+        const sizeClasses = {
+            sm: 'w-8 h-8 text-xs',
+            md: 'w-10 h-10 text-sm',
+            lg: 'w-12 h-12 text-base',
+            xl: 'w-24 h-24 text-xl'
+        };
+
+        return (
+            <div className={`relative ${sizeClasses[size]} rounded-full flex-shrink-0`}>
+                {user.avatar ? (
+                    <img src={user.avatar} alt={user.username} className="w-full h-full rounded-full object-cover border border-slate-200" />
+                ) : (
+                    <div className="w-full h-full bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {user.username[0].toUpperCase()}
+                    </div>
+                )}
+                {user.role === 'admin' && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-yellow-900 font-bold" title="Admin">★</span>
+                )}
+                {showStatus && (user as User).isOnline && (
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                )}
+            </div>
+        );
+    };
+
     // --- Render ---
 
     if (!currentUser) {
@@ -231,26 +354,125 @@ const PlayerPortal = () => {
                             <MessageSquare size={32} className="text-emerald-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900">Player Messenger</h2>
-                        <p className="text-slate-500 mt-2">Connect with other players, chat, and schedule lessons.</p>
+                        <p className="text-slate-500 mt-2">Connect, chat, and play.</p>
                     </div>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
-                            <input
-                                name="username"
-                                type="text"
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none"
-                                placeholder="Enter your name"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-colors"
-                        >
-                            Start Chatting
-                        </button>
-                    </form>
+
+                    <AnimatePresence mode='wait'>
+                        {isRegistering ? (
+                            <motion.form
+                                key="register"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                onSubmit={handleRegister}
+                                className="space-y-4"
+                            >
+                                <div className="flex justify-center mb-4">
+                                    <div className="relative group cursor-pointer">
+                                        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center border-2 border-dashed border-slate-300 overflow-hidden">
+                                            <Camera className="text-slate-400" />
+                                            <img id="avatar-preview" className="absolute inset-0 w-full h-full object-cover hidden" />
+                                        </div>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            onChange={(e) => {
+                                                const img = document.getElementById('avatar-preview') as HTMLImageElement;
+                                                if (e.target.files && e.target.files[0]) {
+                                                    img.src = URL.createObjectURL(e.target.files[0]);
+                                                    img.classList.remove('hidden');
+                                                }
+                                            }}
+                                        />
+                                        <p className="text-xs text-center mt-1 text-slate-400">Upload Photo</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 mb-1">Username</label>
+                                        <div className="relative">
+                                            <UserIcon size={16} className="absolute left-3 top-3 text-slate-400" />
+                                            <input name="username" type="text" required className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="jdoe" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 mb-1">Level</label>
+                                        <div className="relative">
+                                            <Trophy size={16} className="absolute left-3 top-3 text-slate-400" />
+                                            <select name="level" className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm bg-white">
+                                                <option value="Beginner">Beginner (1.0-2.5)</option>
+                                                <option value="Intermediate">Intermediate (3.0-4.0)</option>
+                                                <option value="Advanced">Advanced (4.5+)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-1">Email</label>
+                                    <div className="relative">
+                                        <Mail size={16} className="absolute left-3 top-3 text-slate-400" />
+                                        <input name="email" type="email" required className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="john@example.com" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-1">Phone</label>
+                                    <div className="relative">
+                                        <Phone size={16} className="absolute left-3 top-3 text-slate-400" />
+                                        <input name="phone" type="tel" className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="(555) 123-4567" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-1">Password</label>
+                                    <div className="relative">
+                                        <Lock size={16} className="absolute left-3 top-3 text-slate-400" />
+                                        <input name="password" type="password" required className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="••••••••" />
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-colors">
+                                    Create Account
+                                </button>
+                                <p className="text-center text-sm text-slate-500">
+                                    Already have an account? <button type="button" onClick={() => setIsRegistering(false)} className="text-emerald-600 font-bold hover:underline">Sign In</button>
+                                </p>
+                            </motion.form>
+                        ) : (
+                            <motion.form
+                                key="login"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                onSubmit={handleLogin}
+                                className="space-y-4"
+                            >
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Email or Username</label>
+                                    <div className="relative">
+                                        <UserIcon size={18} className="absolute left-3 top-3 text-slate-400" />
+                                        <input name="identifier" type="text" required className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Enter email or username" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                                    <div className="relative">
+                                        <Lock size={18} className="absolute left-3 top-3 text-slate-400" />
+                                        <input name="password" type="password" required className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Enter password" />
+                                    </div>
+                                </div>
+                                <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-colors">
+                                    Sign In
+                                </button>
+                                <p className="text-center text-sm text-slate-500">
+                                    New player? <button type="button" onClick={() => setIsRegistering(true)} className="text-emerald-600 font-bold hover:underline">Create Account</button>
+                                </p>
+                            </motion.form>
+                        )}
+                    </AnimatePresence>
                 </motion.div>
             </div>
         );
@@ -266,13 +488,8 @@ const PlayerPortal = () => {
                 <div className="w-80 border-r border-slate-100 flex flex-col bg-slate-50/50">
                     {/* My Profile */}
                     <div className="p-4 bg-white border-b border-slate-100 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold relative">
-                                {currentUser.username[0].toUpperCase()}
-                                {currentUser.role === 'admin' && (
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-yellow-900 font-bold" title="Admin">★</span>
-                                )}
-                            </div>
+                        <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setShowProfileModal(true)}>
+                            <Avatar user={currentUser} />
                             <div>
                                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
                                     {currentUser.username}
@@ -283,9 +500,14 @@ const PlayerPortal = () => {
                                 </p>
                             </div>
                         </div>
-                        <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition-colors" title="Logout">
-                            <LogOut size={20} />
-                        </button>
+                        <div className="flex gap-1">
+                            <button onClick={() => setShowProfileModal(true)} className="p-2 text-slate-400 hover:text-emerald-600 transition-colors" title="Edit Profile">
+                                <Edit2 size={18} />
+                            </button>
+                            <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Logout">
+                                <LogOut size={18} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* New Chat Button */}
@@ -369,8 +591,11 @@ const PlayerPortal = () => {
                                     return (
                                         <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                                             {!isMe && (
-                                                <div className="w-8 h-8 bg-slate-300 rounded-full flex items-center justify-center text-xs font-bold text-white mr-2 self-end mb-1">
-                                                    {msg.senderName[0].toUpperCase()}
+                                                <div className="mr-2 self-end mb-1">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                                                        {/* We don't have easy access to sender avatar here without looking it up, simpler to show initial for now or pass it in message */}
+                                                        {msg.senderName[0].toUpperCase()}
+                                                    </div>
                                                 </div>
                                             )}
                                             <div className={`max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
@@ -570,12 +795,7 @@ const PlayerPortal = () => {
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold text-xs relative">
-                                                        {user.username[0].toUpperCase()}
-                                                        {user.role === 'admin' && (
-                                                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border border-white flex items-center justify-center text-[6px] text-yellow-900 font-bold">★</span>
-                                                        )}
-                                                    </div>
+                                                    <Avatar user={user} size="sm" />
                                                     <span className="font-medium text-slate-900 flex items-center gap-2">
                                                         {user.username}
                                                         {user.role === 'admin' && <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1 py-0.5 rounded font-bold uppercase">Admin</span>}
@@ -604,6 +824,89 @@ const PlayerPortal = () => {
                                     Start Chat {selectedUsersForChat.length > 1 ? '(Group)' : ''}
                                 </button>
                             </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Profile Modal */}
+            <AnimatePresence>
+                {showProfileModal && currentUser && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+                        >
+                            <div className="p-4 border-b border-slate-100 flex justify-between items-center">
+                                <h3 className="font-bold text-lg">Edit Profile</h3>
+                                <button onClick={() => setShowProfileModal(false)} className="text-slate-400 hover:text-slate-600">
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <form onSubmit={handleUpdateProfile} className="p-6 space-y-4">
+                                <div className="flex justify-center mb-6">
+                                    <div className="relative group cursor-pointer">
+                                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-50">
+                                            {currentUser.avatar ? (
+                                                <img id="profile-preview" src={currentUser.avatar} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full bg-emerald-600 flex items-center justify-center text-white text-3xl font-bold">
+                                                    {currentUser.username[0].toUpperCase()}
+                                                </div>
+                                            )}
+                                            <img id="profile-preview-new" className="absolute inset-0 w-full h-full object-cover hidden" />
+                                        </div>
+                                        <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Camera className="text-white" />
+                                        </div>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            onChange={(e) => {
+                                                const img = document.getElementById('profile-preview-new') as HTMLImageElement;
+                                                if (e.target.files && e.target.files[0]) {
+                                                    img.src = URL.createObjectURL(e.target.files[0]);
+                                                    img.classList.remove('hidden');
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 mb-1">Username</label>
+                                        <input name="username" type="text" defaultValue={currentUser.username} className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 mb-1">Level</label>
+                                        <select name="level" defaultValue={currentUser.level} className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm bg-white">
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate">Intermediate</option>
+                                            <option value="Advanced">Advanced</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-1">Email</label>
+                                    <input name="email" type="email" defaultValue={currentUser.email} className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 mb-1">Phone</label>
+                                    <input name="phone" type="tel" defaultValue={currentUser.phone} className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                </div>
+
+                                <div className="pt-4">
+                                    <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-colors">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </form>
                         </motion.div>
                     </div>
                 )}
