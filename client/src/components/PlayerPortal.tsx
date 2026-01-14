@@ -2,29 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Calendar, User as UserIcon, Check, X, Clock, Plus, Users, MessageSquare, LogOut, Search, Camera, Edit2, Mail, Phone, Trophy, Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import { auth, db, storage } from '../firebase';
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    updateProfile,
-    onAuthStateChanged
-} from 'firebase/auth';
-import {
-    collection,
-    query,
-    where,
-    onSnapshot,
-    addDoc,
-    updateDoc,
-    doc,
-    serverTimestamp,
-    orderBy,
-    getDocs,
-    setDoc,
-    getDoc
-} from 'firebase/firestore';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
 // --- Types ---
 interface User {
@@ -46,7 +23,7 @@ interface Conversation {
     participants: string[];
     lastMessage?: {
         text: string;
-        timestamp: any;
+        timestamp: string;
         sender: string;
     };
     isOnline?: boolean; // For DMs
@@ -58,7 +35,7 @@ interface Message {
     senderId: string;
     senderName: string;
     text: string;
-    timestamp: any;
+    timestamp: string;
     type: 'text' | 'proposal';
     proposal?: {
         date: string;
@@ -70,8 +47,10 @@ interface Message {
 
 const PlayerPortal = () => {
     // Auth State
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [currentUser, setCurrentUser] = useState<User | null>(() => {
+        const saved = localStorage.getItem('chat_user_data');
+        return saved ? JSON.parse(saved) : null;
+    });
     const [isRegistering, setIsRegistering] = useState(false);
 
     // Data State
@@ -93,152 +72,112 @@ const PlayerPortal = () => {
 
     // --- Effects ---
 
-    // Auth Listener
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                // Fetch extended user profile from Firestore
-                const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-                if (userDoc.exists()) {
-                    setCurrentUser({ id: userDoc.id, ...userDoc.data() } as User);
-                    // Update last seen
-                    updateDoc(doc(db, 'users', firebaseUser.uid), {
-                        lastSeen: new Date().toISOString(),
-                        isOnline: true
-                    });
-                }
-            } else {
-                setCurrentUser(null);
-            }
-            setLoading(false);
-        });
-        return unsubscribe;
-    }, []);
-
     // Scroll to bottom on new messages
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // Real-time Data Listeners
+    // Poll for data
     useEffect(() => {
         if (!currentUser) return;
 
-        // 1. Listen to Conversations
-        const qConvos = query(
-            collection(db, 'conversations'),
-            where('participants', 'array-contains', currentUser.id)
-        );
+        const fetchData = async () => {
+            try {
+                // Get Conversations
+                const convosRes = await fetch('/api/chat/conversations', {
+                    headers: { 'x-user-id': currentUser.id }
+                });
+                if (convosRes.ok) setConversations(await convosRes.json());
 
-        const unsubConvos = onSnapshot(qConvos, (snapshot) => {
-            const convos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Conversation));
-            // Sort locally since we can't easily sort by lastMessage.timestamp with array-contains filter in basic Firestore
-            convos.sort((a, b) => {
-                const tA = a.lastMessage?.timestamp?.toMillis?.() || 0;
-                const tB = b.lastMessage?.timestamp?.toMillis?.() || 0;
-                return tB - tA;
-            });
-            setConversations(convos);
-        });
+                // Get Messages if active
+                if (activeConversationId) {
+                    const msgsRes = await fetch(`/api/chat/conversations/${activeConversationId}/messages`);
+                    if (msgsRes.ok) setMessages(await msgsRes.json());
+                }
 
-        // 2. Listen to Available Users
-        const qUsers = query(collection(db, 'users'));
-        const unsubUsers = onSnapshot(qUsers, (snapshot) => {
-            const users = snapshot.docs
-                .map(doc => ({ id: doc.id, ...doc.data() } as User))
-                .filter(u => u.id !== currentUser.id);
-            setAvailableUsers(users);
-        });
+                // Get Available Users (also updates my lastSeen)
+                const usersRes = await fetch('/api/chat/users', {
+                    headers: { 'x-user-id': currentUser.id }
+                });
+                if (usersRes.ok) setAvailableUsers(await usersRes.json());
 
-        return () => {
-            unsubConvos();
-            unsubUsers();
+            } catch (error) {
+                console.error("Polling error", error);
+            }
         };
-    }, [currentUser]);
 
-    // Listen to Messages for Active Conversation
-    useEffect(() => {
-        if (!activeConversationId) return;
-
-        const qMsgs = query(
-            collection(db, `conversations/${activeConversationId}/messages`),
-            orderBy('timestamp', 'asc')
-        );
-
-        const unsubMsgs = onSnapshot(qMsgs, (snapshot) => {
-            const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
-            setMessages(msgs);
-        });
-
-        return () => unsubMsgs();
-    }, [activeConversationId]);
-
+        fetchData();
+        const interval = setInterval(fetchData, 3000); // Poll every 3s
+        return () => clearInterval(interval);
+    }, [currentUser, activeConversationId]);
 
     // --- Actions ---
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
-        const email = formData.get('identifier') as string; // Assuming email for now
+        const identifier = formData.get('identifier') as string;
         const password = formData.get('password') as string;
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            toast.success("Welcome back!");
-        } catch (error: any) {
-            toast.error(error.message || "Login failed");
+            const res = await fetch('/api/chat/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, password })
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                setCurrentUser(user);
+                localStorage.setItem('chat_user_data', JSON.stringify(user));
+                toast.success(`Welcome back, ${user.username}!`);
+            } else {
+                const err = await res.json();
+                toast.error(err.error || "Login failed");
+            }
+        } catch (error) {
+            toast.error("Login failed");
         }
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
-        const username = formData.get('username') as string;
-        const email = formData.get('email') as string;
-        const password = formData.get('password') as string;
-        const phone = formData.get('phone') as string;
-        const level = formData.get('level') as string;
+        const data: any = Object.fromEntries(formData.entries());
 
-        // Handle Avatar
-        let avatarUrl = '';
+        // Handle Avatar File
         const fileInput = (e.target as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement;
-
-        try {
-            // 1. Create Auth User
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const uid = userCredential.user.uid;
-
-            // 2. Upload Avatar if exists
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const storageRef = ref(storage, `avatars/${uid}`);
-                // Simple upload for now - in real app use uploadBytes
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                await new Promise(resolve => reader.onload = resolve);
-                await uploadString(storageRef, reader.result as string, 'data_url');
-                avatarUrl = await getDownloadURL(storageRef);
-            }
-
-            // 3. Create User Doc in Firestore
-            const newUser: User = {
-                id: uid,
-                username,
-                email,
-                phone,
-                level,
-                avatar: avatarUrl,
-                role: username.toLowerCase() === 'anis' ? 'admin' : 'user',
-                lastSeen: new Date().toISOString(),
-                isOnline: true
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                data.avatar = reader.result as string;
+                await submitRegister(data);
             };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            await submitRegister(data);
+        }
+    };
 
-            await setDoc(doc(db, 'users', uid), newUser);
-            await updateProfile(userCredential.user, { displayName: username, photoURL: avatarUrl });
+    const submitRegister = async (data: any) => {
+        try {
+            const res = await fetch('/api/chat/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-            toast.success("Account created!");
-        } catch (error: any) {
-            toast.error(error.message || "Registration failed");
+            if (res.ok) {
+                const user = await res.json();
+                setCurrentUser(user);
+                localStorage.setItem('chat_user_data', JSON.stringify(user));
+                toast.success(`Welcome, ${user.username}!`);
+            } else {
+                const err = await res.json();
+                toast.error(err.error || "Registration failed");
+            }
+        } catch (error) {
+            toast.error("Registration failed");
         }
     };
 
@@ -247,117 +186,126 @@ const PlayerPortal = () => {
         if (!currentUser) return;
 
         const formData = new FormData(e.target as HTMLFormElement);
-        const updates: any = {
-            username: formData.get('username'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            level: formData.get('level')
-        };
+        const data: any = Object.fromEntries(formData.entries());
 
+        // Handle Avatar File
         const fileInput = (e.target as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                data.avatar = reader.result as string;
+                await submitUpdate(data);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            await submitUpdate(data);
+        }
+    };
 
+    const submitUpdate = async (data: any) => {
+        if (!currentUser) return;
         try {
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const storageRef = ref(storage, `avatars/${currentUser.id}`);
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                await new Promise(resolve => reader.onload = resolve);
-                await uploadString(storageRef, reader.result as string, 'data_url');
-                updates.avatar = await getDownloadURL(storageRef);
-            }
+            const res = await fetch(`/api/chat/users/${currentUser.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-            await updateDoc(doc(db, 'users', currentUser.id), updates);
-            setShowProfileModal(false);
-            toast.success("Profile updated!");
-        } catch (error: any) {
+            if (res.ok) {
+                const updatedUser = await res.json();
+                setCurrentUser(updatedUser);
+                localStorage.setItem('chat_user_data', JSON.stringify(updatedUser));
+                setShowProfileModal(false);
+                toast.success("Profile updated!");
+            } else {
+                toast.error("Update failed");
+            }
+        } catch (error) {
             toast.error("Update failed");
         }
     };
 
-    const handleLogout = async () => {
-        if (currentUser) {
-            await updateDoc(doc(db, 'users', currentUser.id), { isOnline: false });
-        }
-        await signOut(auth);
+    const handleLogout = () => {
+        localStorage.removeItem('chat_user_data');
+        setCurrentUser(null);
         setConversations([]);
         setActiveConversationId(null);
     };
 
     const createConversation = async () => {
-        if (selectedUsersForChat.length === 0 || !currentUser) return;
+        if (selectedUsersForChat.length === 0) return;
 
         const isGroup = selectedUsersForChat.length > 1;
-        const participants = [currentUser.id, ...selectedUsersForChat];
+        const participants = [currentUser!.id, ...selectedUsersForChat];
 
         try {
-            // Check if DM exists
-            if (!isGroup) {
-                const existing = conversations.find(c =>
-                    c.type === 'dm' && c.participants.includes(selectedUsersForChat[0])
-                );
-                if (existing) {
-                    setActiveConversationId(existing.id);
-                    setShowNewChatModal(false);
-                    return;
-                }
-            }
-
-            const newConvoRef = await addDoc(collection(db, 'conversations'), {
-                type: isGroup ? 'group' : 'dm',
-                participants,
-                name: isGroup ? 'New Group' : undefined,
-                createdAt: serverTimestamp()
+            const res = await fetch('/api/chat/conversations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: isGroup ? 'group' : 'dm',
+                    participants,
+                    name: isGroup ? 'New Group' : undefined
+                })
             });
 
-            setActiveConversationId(newConvoRef.id);
-            setShowNewChatModal(false);
-            setSelectedUsersForChat([]);
+            if (res.ok) {
+                const newConvo = await res.json();
+                setActiveConversationId(newConvo.id);
+                setShowNewChatModal(false);
+                setSelectedUsersForChat([]);
+                // Refresh list immediately
+                const convosRes = await fetch('/api/chat/conversations', {
+                    headers: { 'x-user-id': currentUser!.id }
+                });
+                if (convosRes.ok) setConversations(await convosRes.json());
+            }
         } catch (error) {
             toast.error("Failed to create chat");
         }
     };
 
     const sendMessage = async (text: string, type: 'text' | 'proposal' = 'text', proposal?: any) => {
-        if (!activeConversationId || !currentUser || (!text.trim() && type === 'text')) return;
+        if (!activeConversationId || (!text.trim() && type === 'text')) return;
 
         try {
-            const msgData = {
-                conversationId: activeConversationId,
-                senderId: currentUser.id,
-                senderName: currentUser.username,
-                text,
-                type,
-                proposal,
-                timestamp: serverTimestamp()
-            };
-
-            await addDoc(collection(db, `conversations/${activeConversationId}/messages`), msgData);
-
-            // Update conversation last message
-            await updateDoc(doc(db, 'conversations', activeConversationId), {
-                lastMessage: {
-                    text: type === 'proposal' ? '📅 Lesson Proposal' : text,
-                    timestamp: serverTimestamp(),
-                    sender: currentUser.username
-                }
+            const res = await fetch('/api/chat/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conversationId: activeConversationId,
+                    senderId: currentUser!.id,
+                    text,
+                    type,
+                    proposal
+                })
             });
 
-            setInputText('');
-            setShowProposalModal(false);
+            if (res.ok) {
+                setInputText('');
+                setShowProposalModal(false);
+                const newMsg = await res.json();
+                setMessages(prev => [...prev, newMsg]);
+            }
         } catch (error) {
             toast.error("Failed to send message");
         }
     };
 
     const updateProposalStatus = async (msgId: string, status: 'accepted' | 'rejected') => {
-        if (!activeConversationId) return;
         try {
-            const msgRef = doc(db, `conversations/${activeConversationId}/messages`, msgId);
-            await updateDoc(msgRef, {
-                'proposal.status': status
+            const res = await fetch(`/api/chat/messages/${msgId}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
             });
-            toast.success(`Proposal ${status}`);
+
+            if (res.ok) {
+                toast.success(`Proposal ${status}`);
+                // Refresh messages
+                const msgsRes = await fetch(`/api/chat/conversations/${activeConversationId}/messages`);
+                if (msgsRes.ok) setMessages(await msgsRes.json());
+            }
         } catch (error) {
             toast.error("Failed to update status");
         }
@@ -378,7 +326,7 @@ const PlayerPortal = () => {
                     <img src={user.avatar} alt={user.username} className="w-full h-full rounded-full object-cover border border-slate-200" />
                 ) : (
                     <div className="w-full h-full bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {user.username?.[0]?.toUpperCase() || '?'}
+                        {user.username[0].toUpperCase()}
                     </div>
                 )}
                 {user.role === 'admin' && (
@@ -392,10 +340,6 @@ const PlayerPortal = () => {
     };
 
     // --- Render ---
-
-    if (loading) {
-        return <div className="h-screen flex items-center justify-center text-emerald-600">Loading...</div>;
-    }
 
     if (!currentUser) {
         return (
@@ -507,10 +451,10 @@ const PlayerPortal = () => {
                                 className="space-y-4"
                             >
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Email or Username</label>
                                     <div className="relative">
                                         <UserIcon size={18} className="absolute left-3 top-3 text-slate-400" />
-                                        <input name="identifier" type="email" required className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Enter email" />
+                                        <input name="identifier" type="text" required className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Enter email or username" />
                                     </div>
                                 </div>
                                 <div>
@@ -603,7 +547,7 @@ const PlayerPortal = () => {
                                             <h4 className="font-bold text-slate-900 truncate">{convo.name || 'Group Chat'}</h4>
                                             {convo.lastMessage && (
                                                 <span className="text-xs text-slate-400 whitespace-nowrap ml-2">
-                                                    {convo.lastMessage.timestamp?.toDate ? convo.lastMessage.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                                    {new Date(convo.lastMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             )}
                                         </div>
@@ -649,6 +593,7 @@ const PlayerPortal = () => {
                                             {!isMe && (
                                                 <div className="mr-2 self-end mb-1">
                                                     <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                                                        {/* We don't have easy access to sender avatar here without looking it up, simpler to show initial for now or pass it in message */}
                                                         {msg.senderName[0].toUpperCase()}
                                                     </div>
                                                 </div>
@@ -704,7 +649,7 @@ const PlayerPortal = () => {
                                                     </div>
                                                 )}
                                                 <span className="text-[10px] text-slate-400 mt-1 px-1">
-                                                    {msg.timestamp?.toDate ? msg.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Sending...'}
+                                                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
                                         </div>
@@ -908,7 +853,7 @@ const PlayerPortal = () => {
                                                 <img id="profile-preview" src={currentUser.avatar} className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="w-full h-full bg-emerald-600 flex items-center justify-center text-white text-3xl font-bold">
-                                                    {currentUser.username?.[0]?.toUpperCase()}
+                                                    {currentUser.username[0].toUpperCase()}
                                                 </div>
                                             )}
                                             <img id="profile-preview-new" className="absolute inset-0 w-full h-full object-cover hidden" />
