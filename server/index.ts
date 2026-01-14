@@ -111,6 +111,188 @@ async function startServer() {
     }
   });
 
+  // --- Messenger API ---
+
+  interface User {
+    id: string;
+    username: string;
+    lastSeen: string;
+  }
+
+  interface Conversation {
+    id: string;
+    type: 'dm' | 'group';
+    name?: string;
+    participants: string[]; // User IDs
+    lastMessage?: {
+      text: string;
+      timestamp: string;
+      sender: string;
+    };
+  }
+
+  interface Message {
+    id: string;
+    conversationId: string;
+    senderId: string;
+    senderName: string;
+    text: string;
+    timestamp: string;
+    type: 'text' | 'proposal';
+    proposal?: {
+      date: string;
+      time: string;
+      location: string;
+      status: 'pending' | 'accepted' | 'rejected';
+    };
+  }
+
+  // In-memory stores
+  let users: User[] = [];
+  let conversations: Conversation[] = [];
+  let messages: Message[] = [];
+
+  // 1. Login / Register
+  app.post("/api/chat/login", express.json(), (req, res) => {
+    const { username } = req.body;
+    if (!username) return res.status(400).json({ error: "Username required" });
+
+    let user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    if (!user) {
+      user = {
+        id: Math.random().toString(36).substring(7),
+        username,
+        lastSeen: new Date().toISOString()
+      };
+      users.push(user);
+    } else {
+      user.lastSeen = new Date().toISOString();
+    }
+    res.json(user);
+  });
+
+  // 2. Get Users (for creating chats)
+  app.get("/api/chat/users", (req, res) => {
+    // Update lastSeen for the requester if provided
+    const currentUserId = req.headers['x-user-id'] as string;
+    if (currentUserId) {
+      const me = users.find(u => u.id === currentUserId);
+      if (me) me.lastSeen = new Date().toISOString();
+    }
+
+    // Return all users except me
+    const otherUsers = users.filter(u => u.id !== currentUserId).map(u => ({
+      ...u,
+      isOnline: (new Date().getTime() - new Date(u.lastSeen).getTime()) < 30000 // Online if seen in last 30s
+    }));
+    res.json(otherUsers);
+  });
+
+  // 3. Get My Conversations
+  app.get("/api/chat/conversations", (req, res) => {
+    const userId = req.headers['x-user-id'] as string;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const myConvos = conversations.filter(c => c.participants.includes(userId));
+
+    // Enrich DMs with other user's name/status
+    const enriched = myConvos.map(c => {
+      if (c.type === 'dm') {
+        const otherId = c.participants.find(p => p !== userId);
+        const otherUser = users.find(u => u.id === otherId);
+        return {
+          ...c,
+          name: otherUser ? otherUser.username : "Unknown User",
+          isOnline: otherUser ? (new Date().getTime() - new Date(otherUser.lastSeen).getTime()) < 30000 : false
+        };
+      }
+      return c;
+    });
+
+    res.json(enriched.sort((a, b) => {
+      const timeA = a.lastMessage?.timestamp || '0';
+      const timeB = b.lastMessage?.timestamp || '0';
+      return timeB.localeCompare(timeA); // Newest first
+    }));
+  });
+
+  // 4. Create Conversation (DM or Group)
+  app.post("/api/chat/conversations", express.json(), (req, res) => {
+    const { type, participants, name } = req.body; // participants includes me
+
+    if (type === 'dm') {
+      // Check if DM already exists
+      const existing = conversations.find(c =>
+        c.type === 'dm' &&
+        c.participants.every(p => participants.includes(p))
+      );
+      if (existing) return res.json(existing);
+    }
+
+    const newConvo: Conversation = {
+      id: Math.random().toString(36).substring(7),
+      type,
+      name,
+      participants
+    };
+    conversations.push(newConvo);
+    res.json(newConvo);
+  });
+
+  // 5. Get Messages for Conversation
+  app.get("/api/chat/conversations/:id/messages", (req, res) => {
+    const { id } = req.params;
+    const convoMessages = messages.filter(m => m.conversationId === id);
+    res.json(convoMessages);
+  });
+
+  // 6. Send Message
+  app.post("/api/chat/messages", express.json(), (req, res) => {
+    const { conversationId, senderId, text, type = 'text', proposal } = req.body;
+
+    const sender = users.find(u => u.id === senderId);
+    if (!sender) return res.status(400).json({ error: "User not found" });
+
+    const newMessage: Message = {
+      id: Math.random().toString(36).substring(7),
+      conversationId,
+      senderId,
+      senderName: sender.username,
+      text,
+      timestamp: new Date().toISOString(),
+      type,
+      proposal
+    };
+
+    messages.push(newMessage);
+
+    // Update conversation last message
+    const convo = conversations.find(c => c.id === conversationId);
+    if (convo) {
+      convo.lastMessage = {
+        text: type === 'proposal' ? '📅 Lesson Proposal' : text,
+        timestamp: newMessage.timestamp,
+        sender: sender.username
+      };
+    }
+
+    res.json(newMessage);
+  });
+
+  // 7. Update Proposal Status
+  app.patch("/api/chat/messages/:id/status", express.json(), (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const message = messages.find(m => m.id === id);
+    if (message && message.proposal) {
+      message.proposal.status = status;
+      res.json(message);
+    } else {
+      res.status(404).json({ error: "Message not found" });
+    }
+  });
+
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));

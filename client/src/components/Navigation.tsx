@@ -21,6 +21,11 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
       return;
     }
 
+    if (sectionId === 'portal') {
+      setLocation('/portal');
+      return;
+    }
+
     if (location !== '/') {
       setLocation('/');
       // We need to wait for navigation to complete before scrolling
@@ -94,6 +99,8 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
   useEffect(() => {
     if (location === '/reservations') {
       setActiveSection('reservations');
+    } else if (location === '/portal') {
+      setActiveSection('portal');
     }
   }, [location]);
 
@@ -104,7 +111,8 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
     { label: 'About', sectionId: 'about' },
     { label: 'Gallery', sectionId: 'gallery' },
     { label: 'FAQ', sectionId: 'faq' },
-    { label: 'Contact', sectionId: 'contact' }
+    { label: 'Contact', sectionId: 'contact' },
+    { label: 'Player Portal', sectionId: 'portal' }
   ];
 
   return (
