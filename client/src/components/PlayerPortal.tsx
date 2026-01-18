@@ -236,30 +236,43 @@ const PlayerPortal = () => {
 
     return (
         <div className="bg-slate-50 min-h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8 font-sans flex items-center justify-center">
-            <div className="w-full max-w-[1400px] h-[85vh] bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 flex ring-1 ring-slate-900/5">
-                <Sidebar
-                    currentUser={currentUser}
-                    conversations={conversations}
-                    publicChannels={publicChannels}
-                    activeConversationId={activeConversationId}
-                    setActiveConversationId={setActiveConversationId}
-                    availableUsers={availableUsers}
-                    invitations={invitations}
-                    onNewChat={() => setShowNewChatModal(true)}
-                    onEditProfile={() => setShowProfileModal(true)}
-                    handleLogout={handleLogout}
-                    handleAcceptInvitation={handleAcceptInvitation}
-                    handleDeclineInvitation={handleDeclineInvitation}
-                    onStartDM={handleStartDM}
-                />
+            <div className="w-full max-w-[1400px] h-[85vh] bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 flex ring-1 ring-slate-900/5 relative">
+                {/* Sidebar Container: Hidden on mobile if chat active */}
+                <div className={`
+                    ${activeConversationId ? 'hidden md:flex' : 'flex'} 
+                    w-full md:w-80 border-r border-slate-100 flex-col bg-slate-50/50 h-full
+                `}>
+                    <Sidebar
+                        currentUser={currentUser}
+                        conversations={conversations}
+                        publicChannels={publicChannels}
+                        activeConversationId={activeConversationId}
+                        setActiveConversationId={setActiveConversationId}
+                        availableUsers={availableUsers}
+                        invitations={invitations}
+                        onNewChat={() => setShowNewChatModal(true)}
+                        onEditProfile={() => setShowProfileModal(true)}
+                        handleLogout={handleLogout}
+                        handleAcceptInvitation={handleAcceptInvitation}
+                        handleDeclineInvitation={handleDeclineInvitation}
+                        onStartDM={handleStartDM}
+                    />
+                </div>
 
-                <ChatArea
-                    currentUser={currentUser}
-                    activeConversationId={activeConversationId}
-                    activeConvo={activeConvo}
-                    onAddMember={() => setShowAddMemberModal(true)}
-                    onShowMembers={() => setShowMembersModal(true)}
-                />
+                {/* Chat Area Container: Hidden on mobile if no chat active */}
+                <div className={`
+                    ${!activeConversationId ? 'hidden md:flex' : 'flex'} 
+                    flex-1 flex-col bg-white h-full
+                `}>
+                    <ChatArea
+                        currentUser={currentUser}
+                        activeConversationId={activeConversationId}
+                        activeConvo={activeConvo}
+                        onAddMember={() => setShowAddMemberModal(true)}
+                        onShowMembers={() => setShowMembersModal(true)}
+                        onBack={() => setActiveConversationId(null)}
+                    />
+                </div>
             </div>
 
             {/* Modals */}

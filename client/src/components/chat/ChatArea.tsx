@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Calendar, Check, X, Clock, Plus, Users, MessageSquare } from 'lucide-react';
+import { Send, Calendar, Check, X, Clock, Plus, Users, MessageSquare, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import {
     collection,
@@ -23,6 +23,7 @@ interface ChatAreaProps {
     activeConvo: Conversation | undefined;
     onAddMember: () => void;
     onShowMembers: () => void;
+    onBack: () => void;
 }
 
 const ChatArea = ({
@@ -30,7 +31,8 @@ const ChatArea = ({
     activeConversationId,
     activeConvo,
     onAddMember,
-    onShowMembers
+    onShowMembers,
+    onBack
 }: ChatAreaProps) => {
     // Data State
     const [messages, setMessages] = useState<Message[]>([]);
@@ -188,6 +190,12 @@ const ChatArea = ({
             {/* Chat Header */}
             <div className="p-4 border-b border-slate-100 flex items-center justify-between shadow-sm z-10 bg-white/80 backdrop-blur-md sticky top-0">
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={onBack}
+                        className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-full"
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-sm ${activeConvo.type === 'group' ? 'bg-blue-500' :
                         activeConvo.type === 'public' ? 'bg-slate-700' : 'bg-gradient-to-br from-slate-400 to-slate-500'}`}>
                         {activeConvo.type === 'group' ? <Users size={20} /> :

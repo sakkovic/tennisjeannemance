@@ -180,7 +180,7 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
           </div >
         </div >
 
-        <div className={`md:hidden overflow-hidden bg-white ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        <div className={`md:hidden overflow-hidden bg-white transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-[85vh] opacity-100 shadow-xl' : 'max-h-0 opacity-0'
           } `}>
           <div className="px-6 py-4 space-y-4 border-t border-gray-200">
             {navItems.map((item) => (
