@@ -29,7 +29,7 @@ function App() {
           <div ref={mainRef} className="min-h-screen overflow-x-hidden flex flex-col">
             <Navigation ref={navRef} />
 
-            <main className="flex-grow pt-20">
+            <main className="flex-grow pt-32">
               <Switch>
                 <Route path="/" component={Home} />
                 <Route path="/reservations" component={Reservations} />
