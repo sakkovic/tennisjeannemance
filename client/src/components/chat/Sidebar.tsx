@@ -60,7 +60,11 @@ const Sidebar = ({
                     <div>
                         <h3 className="font-bold text-slate-900 flex items-center gap-2">
                             {currentUser.username}
-                            {currentUser.role === 'admin' && <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Admin</span>}
+                            {(currentUser.role === 'admin' || currentUser.email === 'anis.federe@gmail.com') && (
+                                <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">
+                                    Admin
+                                </span>
+                            )}
                         </h3>
                         <p className="text-emerald-600 text-xs font-medium flex items-center gap-1">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full"></span> Online
