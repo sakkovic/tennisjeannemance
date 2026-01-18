@@ -231,10 +231,10 @@ const Contact = () => {
                   <span>Send Message</span>
                   <Send size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
-                <p className="text-xs text-center text-slate-500">
+                {/* <p className="text-xs text-center text-slate-500">
                   Powered by FormSubmit. <br />
                   <span className="font-bold text-emerald-600">IMPORTANT:</span> For the first message, you (Anis) will receive an activation email. Please click it to enable the form.
-                </p>
+                </p> */}
               </div>
             </form>
           </motion.div>

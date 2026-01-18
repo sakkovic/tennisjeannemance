@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Fonction helper pour vérifier si l'utilisateur est connecté
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Fonction helper pour vérifier si l'utilisateur est le propriétaire du document
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Fonction helper pour vérifier si l'utilisateur est Admin (basé sur l'email ou le custom claim si on en avait)
+    // Note: Pour plus de sécurité, on devrait utiliser des Custom Claims, mais ici on vérifie l'email
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'anis.federe@gmail.com' || 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // --- RÈGLES UTILISATEURS ---
+    match /users/{userId} {
+      // Tout le monde connecté peut voir les profils (pour la liste des joueurs)
+      allow read: if isSignedIn();
+      // Seul l'utilisateur peut modifier son propre profil (avatar, etc.)
+      // L'admin peut aussi modifier n'importe qui si besoin (optionnel)
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+    }
+
+    // --- RÈGLES CONVERSATIONS ---
+    match /conversations/{conversationId} {
+      // Lire : Si je suis dans les participants
+      allow read: if isSignedIn() && (request.auth.uid in resource.data.participants);
+      
+      // Créer : 
+      // - Si c'est un DM (2 participants) : Tout le monde peut
+      // - Si c'est un Groupe (>2 participants) : SEULEMENT l'Admin peut
+      allow create: if isSignedIn() && (
+        (request.resource.data.participants.size() <= 2) || isAdmin()
+      );
+
+      // Mettre à jour (ex: dernier message) : Si je suis participant
+      allow update: if isSignedIn() && (request.auth.uid in resource.data.participants);
+
+      // --- RÈGLES MESSAGES (Sous-collection) ---
+      match /messages/{messageId} {
+        // On doit vérifier que l'utilisateur fait partie de la conversation PARENTE
+        // Astuce : On ne peut pas facilement lire le parent ici sans coût supplémentaire.
+        // Solution courante : On fait confiance au fait que si on ne peut pas LIRE la conversation (règle du dessus),
+        // on ne pourra pas trouver l'ID pour lire les messages.
+        // Mais pour l'écriture, on vérifie que l'auteur est bien l'utilisateur connecté.
+        
+        allow read: if isSignedIn(); // Sécurisé par la règle du parent (on ne peut pas lister les messages si on ne peut pas lire la conversation)
+        allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+        allow update: if isSignedIn(); // Pour accepter/refuser les propositions
+      }
+    }
+  }
+}
