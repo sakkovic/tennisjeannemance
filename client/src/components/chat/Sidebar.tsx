@@ -265,7 +265,9 @@ const Sidebar = ({
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h4 className="text-sm font-medium text-slate-700 truncate">{user.username}</h4>
-                                        <p className="text-[10px] text-slate-400 truncate">{user.level || 'Player'}</p>
+                                        <p className="text-[10px] text-slate-400 truncate">
+                                            {user.email === 'anis.federe@gmail.com' ? 'Coach' : (user.level || 'Player')}
+                                        </p>
                                     </div>
                                 </button>
                             ))}

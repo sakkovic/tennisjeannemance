@@ -144,8 +144,12 @@ const NewChatModal = ({
                                         )}
                                     </div>
                                     <div className="text-left flex-1">
-                                        <h4 className={`text-sm ${selectedUsers.includes(user.id) ? 'font-bold text-emerald-900' : 'font-medium text-slate-900'}`}>{user.username}</h4>
-                                        <p className="text-xs text-slate-500">{user.level}</p>
+                                        <div className="flex-1 text-left">
+                                            <p className="font-bold text-slate-800 text-sm">{user.username}</p>
+                                            <p className="text-xs text-slate-500">
+                                                {user.email === 'anis.federe@gmail.com' ? 'Coach' : (user.level || 'Intermediate')}
+                                            </p>
+                                        </div>
                                     </div>
                                 </button>
                             ))}
