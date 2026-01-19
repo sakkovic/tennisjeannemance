@@ -24,6 +24,7 @@ interface ChatAreaProps {
     onAddMember: () => void;
     onShowMembers: () => void;
     onBack: () => void;
+    availableUsers?: User[];
 }
 
 const ChatArea = ({
@@ -32,7 +33,8 @@ const ChatArea = ({
     activeConvo,
     onAddMember,
     onShowMembers,
-    onBack
+    onBack,
+    availableUsers = []
 }: ChatAreaProps) => {
     // Data State
     const [messages, setMessages] = useState<Message[]>([]);
@@ -46,8 +48,25 @@ const ChatArea = ({
         return d.toISOString().split('T')[0];
     });
     const [proposalTime, setProposalTime] = useState('');
-
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Derived Name State
+    let displayTitle = activeConvo?.name || 'Group Chat';
+    let displayAvatarChar = activeConvo?.name?.[0]?.toUpperCase() || '#';
+    let isUserOnline = false;
+
+    if (activeConvo?.type === 'dm' && currentUser) {
+        const otherUserId = activeConvo.participants.find(id => id !== currentUser.id);
+        const otherUser = availableUsers.find(u => u.id === otherUserId);
+        if (otherUser) {
+            displayTitle = otherUser.username;
+            displayAvatarChar = otherUser.username[0].toUpperCase();
+            isUserOnline = otherUser.isOnline || false;
+        }
+    } else if (activeConvo?.type === 'dm') {
+        isUserOnline = activeConvo.isOnline || false;
+    }
+
 
     // Listen to Messages
     useEffect(() => {
@@ -73,8 +92,6 @@ const ChatArea = ({
         const markAsRead = async () => {
             try {
                 const convoRef = doc(db, 'conversations', activeConversationId);
-                // We use setDoc with merge to ensure nested field update works even if map doesn't exist?
-                // valid updateDoc syntax for nested map: "lastRead.uid": val
                 await updateDoc(convoRef, {
                     [`lastRead.${currentUser.id}`]: serverTimestamp()
                 });
@@ -86,7 +103,8 @@ const ChatArea = ({
         markAsRead();
     }, [activeConversationId, currentUser, messages.length]);
 
-    // Scroll to bottom
+    // Scroll to bottom logic - tweaked to respect sticky header? 
+    // Actually standard scrollIntoView works fine inside the container.
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -108,7 +126,6 @@ const ChatArea = ({
 
             await addDoc(collection(db, `conversations/${activeConversationId}/messages`), msgData);
 
-            // Update conversation last message
             await updateDoc(doc(db, 'conversations', activeConversationId), {
                 lastMessage: {
                     text: type === 'proposal' ? '📅 Lesson Proposal' : text,
@@ -125,6 +142,7 @@ const ChatArea = ({
     };
 
     const updateProposalStatus = async (msgId: string, status: 'accepted' | 'rejected') => {
+        // ... (kept same)
         if (!activeConversationId) return;
         try {
             const msgRef = doc(db, `conversations/${activeConversationId}/messages`, msgId);
@@ -138,6 +156,7 @@ const ChatArea = ({
     };
 
     const handleVote = async (msgId: string, voteType: 'yes' | 'no') => {
+        // ... (kept same logic, just saving space in replacement)
         if (!activeConversationId || !currentUser) return;
         try {
             const msgRef = doc(db, `conversations/${activeConversationId}/messages`, msgId);
@@ -146,22 +165,15 @@ const ChatArea = ({
 
             const msgData = msgDoc.data() as Message;
             const currentVotes = msgData.votes || { yes: [], no: [] };
-
             const userId = currentUser.id;
 
-            // Remove from both first to toggle/switch
             let newYes = currentVotes.yes.filter(id => id !== userId);
             let newNo = currentVotes.no.filter(id => id !== userId);
 
-            // Add to selected
             if (voteType === 'yes') {
-                if (!currentVotes.yes.includes(userId)) {
-                    newYes.push(userId);
-                }
+                if (!currentVotes.yes.includes(userId)) newYes.push(userId);
             } else {
-                if (!currentVotes.no.includes(userId)) {
-                    newNo.push(userId);
-                }
+                if (!currentVotes.no.includes(userId)) newNo.push(userId);
             }
 
             await updateDoc(msgRef, {
@@ -186,139 +198,147 @@ const ChatArea = ({
     }
 
     return (
-        <div className="flex-1 flex flex-col bg-white h-full min-h-0">
-            {/* Chat Header */}
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between shadow-sm z-10 bg-white/80 backdrop-blur-md sticky top-0">
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={onBack}
-                        className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-full"
-                    >
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-sm ${activeConvo.type === 'group' ? 'bg-blue-500' :
-                        activeConvo.type === 'public' ? 'bg-slate-700' : 'bg-gradient-to-br from-slate-400 to-slate-500'}`}>
-                        {activeConvo.type === 'group' ? <Users size={20} /> :
-                            activeConvo.type === 'public' ? '#' :
-                                activeConvo.name?.[0].toUpperCase()}
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-slate-900 leading-tight">{activeConvo.name || 'Group Chat'}</h3>
-                        {activeConvo.type === 'dm' && (
-                            <p className={`text-xs font-medium ${activeConvo.isOnline ? 'text-emerald-600' : 'text-slate-400'}`}>
-                                {activeConvo.isOnline ? 'Active now' : 'Offline'}
-                            </p>
-                        )}
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    {activeConvo.type === 'group' && (
+        <div className="flex-1 flex flex-col bg-white h-full min-h-0 relative">
+
+            {/* Scrollable Container including Sticky Header */}
+            <div className="flex-1 overflow-y-auto bg-slate-50 relative">
+
+                {/* Chat Header (Sticky) */}
+                <div className="p-4 border-b border-slate-100 flex items-center justify-between shadow-sm z-30 bg-white/90 backdrop-blur-md sticky top-0 left-0 right-0">
+                    <div className="flex items-center gap-3">
                         <button
-                            onClick={onAddMember}
-                            className="bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+                            onClick={onBack}
+                            className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-full"
                         >
-                            <Plus size={14} /> Add Member
+                            <ArrowLeft size={20} />
                         </button>
-                    )}
-                    {activeConvo.type === 'group' && (
-                        <button
-                            onClick={onShowMembers}
-                            className="bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
-                        >
-                            <Users size={14} /> Members
-                        </button>
-                    )}
-                    <button
-                        onClick={() => setShowProposalModal(true)}
-                        className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
-                    >
-                        <Calendar size={14} /> Schedule Lesson
-                    </button>
-                </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
-                {messages.map((msg) => {
-                    const isMe = msg.senderId === currentUser.id;
-                    return (
-                        <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                            {!isMe && (
-                                <div className="mr-2 self-end mb-1">
-                                    <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
-                                        {msg.senderName[0].toUpperCase()}
-                                    </div>
-                                </div>
-                            )}
-                            <div className={`max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                                {activeConvo.type === 'group' && !isMe && (
-                                    <span className="text-xs text-slate-500 ml-1 mb-1">{msg.senderName}</span>
-                                )}
-
-                                {msg.type === 'text' ? (
-                                    <div className={`px-4 py-2 rounded-2xl ${isMe ? 'bg-emerald-600 text-white rounded-br-none' : 'bg-white text-slate-800 shadow-sm rounded-bl-none'}`}>
-                                        {msg.text}
-                                    </div>
-                                ) : (
-                                    <div className={`p-6 rounded-2xl bg-white shadow-md border-l-4 w-[280px] sm:w-[320px] ${msg.proposal?.status === 'accepted' ? 'border-emerald-500' :
-                                        msg.proposal?.status === 'rejected' ? 'border-red-500' : 'border-amber-500'
-                                        }`}>
-                                        <div className="flex items-center gap-2 mb-3 font-bold text-slate-900 text-base">
-                                            <Calendar size={20} className="text-emerald-600" />
-                                            Lesson Proposal
-                                        </div>
-                                        <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                                            Proposed a session on <br />
-                                            <span className="font-bold text-slate-900 text-lg">{msg.proposal?.date}</span> at <span className="font-bold text-slate-900 text-lg">{msg.proposal?.time}</span>
-                                            {msg.proposal?.location && (
-                                                <> <br /> <span className="text-slate-500 text-xs">@ {msg.proposal.location}</span></>
-                                            )}
-                                        </p>
-
-                                        <div className="flex items-center justify-between gap-4 mt-2 border-t border-slate-100 pt-3">
-                                            <div className={`text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider ${msg.proposal?.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
-                                                msg.proposal?.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
-                                                }`}>
-                                                {msg.proposal?.status}
-                                            </div>
-
-                                            {/* Voting UI */}
-                                            {msg.proposal?.status === 'pending' && (
-                                                <div className="flex gap-3">
-                                                    <button
-                                                        onClick={() => handleVote(msg.id, 'yes')}
-                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${msg.votes?.yes.includes(currentUser?.id || '')
-                                                            ? 'bg-emerald-500 text-white shadow-md ring-2 ring-emerald-200'
-                                                            : 'bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-600'
-                                                            }`}
-                                                    >
-                                                        <Check size={14} />
-                                                        Yes {msg.votes?.yes.length ? `(${msg.votes.yes.length})` : ''}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleVote(msg.id, 'no')}
-                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${msg.votes?.no.includes(currentUser?.id || '')
-                                                            ? 'bg-red-500 text-white shadow-md ring-2 ring-red-200'
-                                                            : 'bg-slate-100 text-slate-600 hover:bg-red-100 hover:text-red-600'
-                                                            }`}
-                                                    >
-                                                        <X size={14} />
-                                                        No {msg.votes?.no.length ? `(${msg.votes?.no.length})` : ''}
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                                <span className="text-[10px] text-slate-400 mt-1 px-1">
-                                    {msg.timestamp?.toDate ? msg.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Sending...'}
-                                </span>
-                            </div>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-sm ${activeConvo.type === 'group' ? 'bg-blue-500' :
+                            activeConvo.type === 'public' ? 'bg-slate-700' : 'bg-gradient-to-br from-slate-400 to-slate-500'}`}>
+                            {activeConvo.type === 'group' ? <Users size={20} /> :
+                                activeConvo.type === 'public' ? '#' :
+                                    displayAvatarChar}
                         </div>
-                    );
-                })}
-                <div ref={messagesEndRef} />
+                        <div>
+                            <h3 className="font-bold text-slate-900 leading-tight">{displayTitle}</h3>
+                            {activeConvo.type === 'dm' && (
+                                <p className={`text-xs font-medium ${isUserOnline ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                    {isUserOnline ? 'Active now' : 'Offline'}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {activeConvo.type === 'group' && (
+                            <button
+                                onClick={onAddMember}
+                                className="bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+                            >
+                                <Plus size={14} /> Add Member
+                            </button>
+                        )}
+                        {activeConvo.type === 'group' && (
+                            <button
+                                onClick={onShowMembers}
+                                className="bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+                            >
+                                <Users size={14} /> Members
+                            </button>
+                        )}
+                        <button
+                            onClick={() => setShowProposalModal(true)}
+                            className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+                        >
+                            <Calendar size={14} /> Schedule Lesson
+                        </button>
+                    </div>
+                </div>
+
+                {/* Messages List (Now inside the same container) */}
+                <div className="p-6 space-y-4 pb-4">
+
+                    {messages.map((msg) => {
+                        const isMe = msg.senderId === currentUser.id;
+                        return (
+                            <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                                {!isMe && (
+                                    <div className="mr-2 self-end mb-1">
+                                        <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                                            {msg.senderName[0].toUpperCase()}
+                                        </div>
+                                    </div>
+                                )}
+                                <div className={`max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                                    {activeConvo.type === 'group' && !isMe && (
+                                        <span className="text-xs text-slate-500 ml-1 mb-1">{msg.senderName}</span>
+                                    )}
+
+                                    {msg.type === 'text' ? (
+                                        <div className={`px-4 py-2 rounded-2xl ${isMe ? 'bg-emerald-600 text-white rounded-br-none' : 'bg-white text-slate-800 shadow-sm rounded-bl-none'}`}>
+                                            {msg.text}
+                                        </div>
+                                    ) : (
+                                        <div className={`p-6 rounded-2xl bg-white shadow-md border-l-4 w-[280px] sm:w-[320px] ${msg.proposal?.status === 'accepted' ? 'border-emerald-500' :
+                                            msg.proposal?.status === 'rejected' ? 'border-red-500' : 'border-amber-500'
+                                            }`}>
+                                            <div className="flex items-center gap-2 mb-3 font-bold text-slate-900 text-base">
+                                                <Calendar size={20} className="text-emerald-600" />
+                                                Lesson Proposal
+                                            </div>
+                                            <p className="text-slate-600 mb-4 text-sm leading-relaxed">
+                                                Proposed a session on <br />
+                                                <span className="font-bold text-slate-900 text-lg">{msg.proposal?.date}</span> at <span className="font-bold text-slate-900 text-lg">{msg.proposal?.time}</span>
+                                                {msg.proposal?.location && (
+                                                    <> <br /> <span className="text-slate-500 text-xs">@ {msg.proposal.location}</span></>
+                                                )}
+                                            </p>
+
+                                            <div className="flex items-center justify-between gap-4 mt-2 border-t border-slate-100 pt-3">
+                                                <div className={`text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider ${msg.proposal?.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
+                                                    msg.proposal?.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                                                    }`}>
+                                                    {msg.proposal?.status}
+                                                </div>
+
+                                                {/* Voting UI */}
+                                                {msg.proposal?.status === 'pending' && (
+                                                    <div className="flex gap-3">
+                                                        <button
+                                                            onClick={() => handleVote(msg.id, 'yes')}
+                                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${msg.votes?.yes.includes(currentUser?.id || '')
+                                                                ? 'bg-emerald-500 text-white shadow-md ring-2 ring-emerald-200'
+                                                                : 'bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-600'
+                                                                }`}
+                                                        >
+                                                            <Check size={14} />
+                                                            Yes {msg.votes?.yes.length ? `(${msg.votes.yes.length})` : ''}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleVote(msg.id, 'no')}
+                                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${msg.votes?.no.includes(currentUser?.id || '')
+                                                                ? 'bg-red-500 text-white shadow-md ring-2 ring-red-200'
+                                                                : 'bg-slate-100 text-slate-600 hover:bg-red-100 hover:text-red-600'
+                                                                }`}
+                                                        >
+                                                            <X size={14} />
+                                                            No {msg.votes?.no.length ? `(${msg.votes?.no.length})` : ''}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                    <span className="text-[10px] text-slate-400 mt-1 px-1">
+                                        {msg.timestamp?.toDate ? msg.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Sending...'}
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    })}
+                    <div ref={messagesEndRef} />
+                </div>
+                {/* End of Scrollable Container */}
             </div>
+            {/* End of Wrapper. ACTUALLY, Input Area is sibling. */}
 
             {/* Input Area */}
             <div className="p-4 bg-white border-t border-slate-100">
