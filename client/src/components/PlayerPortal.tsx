@@ -235,8 +235,8 @@ const PlayerPortal = () => {
     const activeConvo = conversations.find(c => c.id === activeConversationId) || publicChannels.find(c => c.id === activeConversationId);
 
     return (
-        <div className="bg-slate-50 min-h-[calc(100vh-80px)] p-0 md:p-4 sm:p-6 lg:p-8 font-sans flex items-center justify-center">
-            <div className="w-full max-w-[1400px] h-[calc(100vh-80px)] md:h-[85vh] bg-white md:rounded-2xl shadow-none md:shadow-xl overflow-hidden border-0 md:border border-slate-200 flex ring-0 md:ring-1 ring-slate-900/5 relative">
+        <div className="bg-slate-50 min-h-[calc(100vh-96px)] p-0 md:p-4 sm:p-6 lg:p-8 font-sans flex items-center justify-center">
+            <div className="w-full max-w-[1400px] h-[calc(100vh-96px)] md:h-[85vh] bg-white md:rounded-2xl shadow-none md:shadow-xl overflow-hidden border-0 md:border border-slate-200 flex ring-0 md:ring-1 ring-slate-900/5 relative">
                 {/* Sidebar Container: Hidden on mobile if chat active */}
                 <div className={`
                     ${activeConversationId ? 'hidden md:flex' : 'flex'} 
