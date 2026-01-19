@@ -52,7 +52,7 @@ const Sidebar = ({
     };
 
     return (
-        <div className="w-80 border-r border-slate-100 flex flex-col bg-slate-50/50">
+        <div className="w-80 border-r border-slate-100 flex flex-col bg-slate-50/50 h-full">
             {/* My Profile */}
             <div className="p-4 bg-white border-b border-slate-100 flex justify-between items-center">
                 <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={onEditProfile}>

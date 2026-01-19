@@ -235,8 +235,9 @@ const PlayerPortal = () => {
     const activeConvo = conversations.find(c => c.id === activeConversationId) || publicChannels.find(c => c.id === activeConversationId);
 
     return (
-        <div className="bg-slate-50 min-h-[calc(100vh-128px)] p-0 md:p-4 sm:p-6 lg:p-8 font-sans flex items-center justify-center">
-            <div className="w-full max-w-[1400px] h-[calc(100vh-128px)] md:h-[85vh] bg-white md:rounded-2xl shadow-none md:shadow-xl overflow-hidden border-0 md:border border-slate-200 flex ring-0 md:ring-1 ring-slate-900/5 relative">
+        // Use dVH for mobile browsers. Strict height + overflow-hidden prevents window scrollbar.
+        <div className="bg-slate-50 h-[calc(100dvh-128px)] p-0 md:p-4 lg:p-6 font-sans flex items-center justify-center overflow-hidden">
+            <div className="w-full max-w-[1400px] h-full md:h-[85vh] bg-white md:rounded-2xl shadow-none md:shadow-xl overflow-hidden border-0 md:border border-slate-200 flex ring-0 md:ring-1 ring-slate-900/5 relative">
                 {/* Sidebar Container: Hidden on mobile if chat active */}
                 <div className={`
                     ${activeConversationId ? 'hidden md:flex' : 'flex'} 
@@ -262,8 +263,16 @@ const PlayerPortal = () => {
                 {/* Chat Area Container: Hidden on mobile if no chat active */}
                 <div className={`
                     ${!activeConversationId ? 'hidden md:flex' : 'flex'} 
-                    flex-1 flex-col bg-white h-full min-h-0
+                    flex-1 flex-col bg-white h-full min-h-0 relative
                 `}>
+                    {/* Close Button for Mobile (when in chat) */}
+                    {activeConversationId && (
+                        <div className="md:hidden absolute top-4 left-4 z-50">
+                            {/* Back button is handled inside ChatArea header now, so we don't need duplicate. 
+                                 But we need to ensure ChatArea header is visible. */}
+                        </div>
+                    )}
+
                     <ChatArea
                         currentUser={currentUser}
                         activeConversationId={activeConversationId}
