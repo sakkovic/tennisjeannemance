@@ -235,9 +235,9 @@ const PlayerPortal = () => {
     const activeConvo = conversations.find(c => c.id === activeConversationId) || publicChannels.find(c => c.id === activeConversationId);
 
     return (
-        // Use dVH for mobile browsers. Strict height + overflow-hidden prevents window scrollbar.
-        <div className="bg-slate-50 h-[calc(100dvh-128px)] p-0 md:p-4 lg:p-6 font-sans flex items-center justify-center overflow-hidden">
-            <div className="w-full max-w-[1400px] h-full md:h-[85vh] bg-white md:rounded-2xl shadow-none md:shadow-xl overflow-hidden border-0 md:border border-slate-200 flex ring-0 md:ring-1 ring-slate-900/5 relative">
+        // Full width/height container, no padding/margins/shadows (Messenger style)
+        <div className="bg-white h-[calc(100dvh-128px)] font-sans flex overflow-hidden">
+            <div className="w-full h-full flex relative">
                 {/* Sidebar Container: Hidden on mobile if chat active */}
                 <div className={`
                     ${activeConversationId ? 'hidden md:flex' : 'flex'} 
