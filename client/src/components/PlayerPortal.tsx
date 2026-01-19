@@ -272,6 +272,7 @@ const PlayerPortal = () => {
                         onShowMembers={() => setShowMembersModal(true)}
                         onBack={() => setActiveConversationId(null)}
                         availableUsers={availableUsers}
+                        onStartDM={handleStartDM}
                     />
                 </div>
             </div>
