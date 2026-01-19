@@ -240,7 +240,7 @@ const PlayerPortal = () => {
                 {/* Sidebar Container: Hidden on mobile if chat active */}
                 <div className={`
                     ${activeConversationId ? 'hidden md:flex' : 'flex'} 
-                    w-full md:w-80 border-r border-slate-100 flex-col bg-slate-50/50 h-full
+                    w-full md:w-80 border-r border-slate-100 flex-col bg-slate-50/50 h-full min-h-0
                 `}>
                     <Sidebar
                         currentUser={currentUser}
@@ -262,7 +262,7 @@ const PlayerPortal = () => {
                 {/* Chat Area Container: Hidden on mobile if no chat active */}
                 <div className={`
                     ${!activeConversationId ? 'hidden md:flex' : 'flex'} 
-                    flex-1 flex-col bg-white h-full
+                    flex-1 flex-col bg-white h-full min-h-0
                 `}>
                     <ChatArea
                         currentUser={currentUser}
