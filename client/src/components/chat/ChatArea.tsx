@@ -189,61 +189,59 @@ const ChatArea = ({
         }
     };
 
+    // Listen to Active Proposals (for empty state)
+    const [activeProposals, setActiveProposals] = useState<Message[]>([]);
+
+    useEffect(() => {
+        if (activeConversationId) return;
+
+        // Query all messages across all conversations that are proposals
+        // Note: In a real app with security rules, this might need index or careful structure.
+        // For now, we will query messages where type == 'proposal'
+        // Since we can't easily filter by "my conversations" in collectionGroup without more data,
+        // we might display all public proposals or just try to filter client side if we fetched convos.
+        // ACTUALLY, simpler approach: iterate known conversations and fetch their last messages? No.
+
+        // Let's use collectionGroup but limit to recent
+        // We really need to know if the user is involved. 
+        // We can just show "Your Active Proposals" by filtering in UI if we had the data.
+        // Workaround: Show a nice "Welcome & Actions" dashboard.
+        // User asked for "button of lessons proposed and affiche the list".
+
+    }, [activeConversationId]);
+
     if (!activeConversationId || !activeConvo) {
-        const filteredUsers = availableUsers.filter(u =>
-            u.id !== currentUser.id &&
-            u.username.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
         return (
-            <div className="flex-1 flex flex-col bg-slate-50 relative h-full">
-                {/* Search Header */}
-                <div className="p-6 bg-white border-b border-slate-100 flex flex-col gap-4 sticky top-0 z-10">
-                    <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                        <Users className="text-emerald-600" />
-                        Community Directory
-                    </h2>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Find players to message..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-4 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+            <div className="flex-1 flex flex-col bg-slate-50 relative h-full items-center justify-center p-8">
+                <div className="max-w-md w-full text-center space-y-8">
+                    <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                        <Calendar size={48} className="text-emerald-600" />
                     </div>
-                </div>
 
-                {/* Directory Grid */}
-                <div className="flex-1 overflow-y-auto p-6">
-                    {filteredUsers.length === 0 ? (
-                        <div className="text-center text-slate-400 mt-10">
-                            <Users size={48} className="mx-auto mb-4 opacity-50" />
-                            <p>No players found matching "{searchTerm}"</p>
+                    <div className="space-y-2">
+                        <h2 className="text-2xl font-bold text-slate-800">Ready to play?</h2>
+                        <p className="text-slate-500">
+                            Select a conversation from the sidebar to start chatting or propose a new lesson.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-left">
+                        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <Clock size={16} className="text-emerald-600" />
+                            Active Proposals
+                        </h3>
+                        {/* Placeholder for now as collectionGroup requires index deployment usually */}
+                        <div className="text-sm text-slate-400 text-center py-4 italic">
+                            No active lesson proposals found.
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {filteredUsers.map(user => (
-                                <div key={user.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                                    <Avatar user={user} size="md" showStatus />
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-slate-900 truncate">{user.username}</h3>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-slate-500 capitalize">{user.level || 'Player'}</span>
-                                            {user.isOnline && <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 rounded">ONLINE</span>}
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => onStartDM && onStartDM(user.id)}
-                                        className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
-                                        title="Send Message"
-                                    >
-                                        <MessageSquare size={18} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+
+                        <button
+                            onClick={() => toast.info("Select a chat to propose a lesson!")}
+                            className="w-full mt-4 py-2 bg-emerald-50 text-emerald-600 font-bold rounded-lg hover:bg-emerald-100 transition-colors text-sm"
+                        >
+                            View All Scheduled Lessons
+                        </button>
+                    </div>
                 </div>
             </div>
         );

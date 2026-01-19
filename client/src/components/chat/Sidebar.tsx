@@ -125,10 +125,10 @@ const Sidebar = ({
                 </div>
             </div>
 
-            {/* Conversation List */}
-            <div className="flex-1 overflow-y-auto">
+            {/* Conversations List */}
+            <div className="flex-1 overflow-y-auto no-scrollbar">
 
-                {/* Invitations Section */}
+                {/* Pending Invitations Section */}
                 {invitations.length > 0 && (
                     <div className="mb-4">
                         <div className="px-4 py-2 text-xs font-bold text-amber-500 uppercase tracking-widest flex items-center gap-2">
@@ -183,9 +183,7 @@ const Sidebar = ({
                     </>
                 )}
 
-                <div className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mt-4">
-                    {chatFilter === 'groups' ? 'Group Chats' : chatFilter === 'unread' ? 'Unread Messages' : 'Direct Messages'}
-                </div>
+                {/* Header Removed as per user request */}
                 {conversations.length === 0 ? (
                     <div className="p-8 text-center text-slate-400 text-sm">
                         <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
