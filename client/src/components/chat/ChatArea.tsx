@@ -25,6 +25,7 @@ interface ChatAreaProps {
     onShowMembers: () => void;
     onBack: () => void;
     availableUsers?: User[];
+    onStartDM?: (userId: string) => void;
 }
 
 const ChatArea = ({
@@ -34,10 +35,12 @@ const ChatArea = ({
     onAddMember,
     onShowMembers,
     onBack,
-    availableUsers = []
+    availableUsers = [],
+    onStartDM
 }: ChatAreaProps) => {
     // Data State
     const [messages, setMessages] = useState<Message[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // UI State
     const [inputText, setInputText] = useState('');
@@ -187,12 +190,61 @@ const ChatArea = ({
     };
 
     if (!activeConversationId || !activeConvo) {
+        const filteredUsers = availableUsers.filter(u =>
+            u.id !== currentUser.id &&
+            u.username.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
         return (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
-                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                    <MessageSquare size={40} className="text-slate-300" />
+            <div className="flex-1 flex flex-col bg-slate-50 relative h-full">
+                {/* Search Header */}
+                <div className="p-6 bg-white border-b border-slate-100 flex flex-col gap-4 sticky top-0 z-10">
+                    <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <Users className="text-emerald-600" />
+                        Community Directory
+                    </h2>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Find players to message..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-4 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                    </div>
                 </div>
-                <p className="text-lg font-medium">Select a chat to start messaging</p>
+
+                {/* Directory Grid */}
+                <div className="flex-1 overflow-y-auto p-6">
+                    {filteredUsers.length === 0 ? (
+                        <div className="text-center text-slate-400 mt-10">
+                            <Users size={48} className="mx-auto mb-4 opacity-50" />
+                            <p>No players found matching "{searchTerm}"</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {filteredUsers.map(user => (
+                                <div key={user.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
+                                    <Avatar user={user} size="md" showStatus />
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-bold text-slate-900 truncate">{user.username}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-slate-500 capitalize">{user.level || 'Player'}</span>
+                                            {user.isOnline && <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 rounded">ONLINE</span>}
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => onStartDM && onStartDM(user.id)}
+                                        className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
+                                        title="Send Message"
+                                    >
+                                        <MessageSquare size={18} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         );
     }
