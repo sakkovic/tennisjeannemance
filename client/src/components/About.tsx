@@ -3,7 +3,7 @@ import profileImage from '../assets/_A100156.jpg';
 
 const About = () => {
   return (
-    <section className="pt-20 pb-12 px-6">
+    <section className="pt-12 md:pt-8 pb-12 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
           <motion.div

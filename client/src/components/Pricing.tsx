@@ -8,7 +8,7 @@ const Pricing = () => {
     const plans = [
         {
             name: "Private Session",
-            price: "80",
+            price: "70",
             period: "/ hour",
             description: "One-on-one coaching tailored to your specific needs and goals.",
             features: [
@@ -23,7 +23,7 @@ const Pricing = () => {
         },
         {
             name: "Performance Pack",
-            price: "350",
+            price: "300",
             period: "/ 5 sessions",
             description: "Intensive program for players committed to rapid improvement.",
             features: [
@@ -38,7 +38,7 @@ const Pricing = () => {
         },
         {
             name: "Group Clinic",
-            price: "40",
+            price: "50",
             period: "/ person",
             description: "Fun and competitive group sessions to improve with others.",
             features: [

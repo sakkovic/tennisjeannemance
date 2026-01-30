@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import MobileBookButton from './components/MobileBookButton';
 import BackToTop from './components/BackToTop';
 import PlayerPortal from './components/PlayerPortal';
+import AdminDashboard from './components/admin/AdminDashboard';
 import useDynamicTheme from './hooks/use-dynamic-theme';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/" component={Home} />
                 <Route path="/reservations" component={Reservations} />
                 <Route path="/portal" component={PlayerPortal} />
+                <Route path="/admin" component={AdminDashboard} />
                 {/* Fallback to Home for unknown routes */}
                 <Route component={Home} />
               </Switch>

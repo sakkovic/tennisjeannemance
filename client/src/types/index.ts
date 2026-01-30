@@ -44,3 +44,27 @@ export interface Message {
         no: string[];
     };
 }
+export interface LessonProposal {
+    id: string;
+    conversationId: string;
+    conversationName: string;
+    proposerId: string;
+    proposerName: string;
+    date: string;
+    time: string;
+    location: string;
+    status: 'pending' | 'accepted' | 'rejected' | 'expired';
+    participants: string[];
+    createdAt: any;
+}
+
+export interface Notification {
+    id: string;
+    userId: string;
+    type: 'proposal_received' | 'proposal_accepted';
+    title: string;
+    message: string;
+    read: boolean;
+    createdAt: any;
+    link?: string; // e.g., conversationId
+}

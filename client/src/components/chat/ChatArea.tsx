@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Calendar, Check, X, Clock, Plus, Users, MessageSquare, ArrowLeft } from 'lucide-react';
+import { Send, Calendar, Check, X, Clock, Plus, Users, MessageSquare, ArrowLeft, Info, MapPin, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import {
     collection,
@@ -11,7 +11,9 @@ import {
     updateDoc,
     doc,
     serverTimestamp,
-    getDoc
+    getDoc,
+    collectionGroup,
+    where
 } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { User, Conversation, Message } from '../../types';
@@ -26,6 +28,7 @@ interface ChatAreaProps {
     onBack: () => void;
     availableUsers?: User[];
     onStartDM?: (userId: string) => void;
+    conversations?: Conversation[]; // Added prop
 }
 
 const ChatArea = ({
@@ -34,9 +37,11 @@ const ChatArea = ({
     activeConvo,
     onAddMember,
     onShowMembers,
+
     onBack,
     availableUsers = [],
-    onStartDM
+    onStartDM,
+    conversations = []
 }: ChatAreaProps) => {
     // Data State
     const [messages, setMessages] = useState<Message[]>([]);
@@ -46,9 +51,7 @@ const ChatArea = ({
     const [inputText, setInputText] = useState('');
     const [showProposalModal, setShowProposalModal] = useState(false);
     const [proposalDate, setProposalDate] = useState(() => {
-        const d = new Date();
-        d.setFullYear(2025);
-        return d.toISOString().split('T')[0];
+        return new Date().toISOString().split('T')[0];
     });
     const [proposalTime, setProposalTime] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -137,9 +140,42 @@ const ChatArea = ({
                 }
             });
 
+            // Handle Proposal Side Effects (Notifications & Central Tracking)
+            if (type === 'proposal' && proposal) {
+                // 1. Create Lesson Proposal Record for easier querying
+                await addDoc(collection(db, 'lesson_proposals'), {
+                    conversationId: activeConversationId,
+                    conversationName: activeConvo?.name || 'Private Chat',
+                    proposerId: currentUser.id,
+                    proposerName: currentUser.username,
+                    date: proposal.date,
+                    time: proposal.time,
+                    location: proposal.location || 'Jeanne-Mance Park',
+                    status: 'pending',
+                    participants: activeConvo?.participants || [],
+                    createdAt: serverTimestamp()
+                });
+
+                // 2. Notify other participants
+                const otherParticipants = activeConvo?.participants.filter(p => p !== currentUser.id) || [];
+                const notificationPromises = otherParticipants.map(uid =>
+                    addDoc(collection(db, 'notifications'), {
+                        userId: uid,
+                        type: 'proposal_received',
+                        title: 'New Lesson Proposal',
+                        message: `${currentUser.username} proposed a lesson for ${proposal.date} at ${proposal.time}`,
+                        read: false,
+                        createdAt: serverTimestamp(),
+                        link: activeConversationId
+                    })
+                );
+                await Promise.all(notificationPromises);
+            }
+
             setInputText('');
             setShowProposalModal(false);
         } catch (error) {
+            console.error(error);
             toast.error("Failed to send message");
         }
     };
@@ -190,25 +226,71 @@ const ChatArea = ({
     };
 
     // Listen to Active Proposals (for empty state)
-    const [activeProposals, setActiveProposals] = useState<Message[]>([]);
+    const [activeProposals, setActiveProposals] = useState<any[]>([]); // Using any for UI mapping ease
 
     useEffect(() => {
         if (activeConversationId) return;
 
         // Query all messages across all conversations that are proposals
-        // Note: In a real app with security rules, this might need index or careful structure.
-        // For now, we will query messages where type == 'proposal'
-        // Since we can't easily filter by "my conversations" in collectionGroup without more data,
-        // we might display all public proposals or just try to filter client side if we fetched convos.
-        // ACTUALLY, simpler approach: iterate known conversations and fetch their last messages? No.
+        const qProposals = query(
+            collectionGroup(db, 'messages'),
+            where('type', '==', 'proposal')
+        );
 
-        // Let's use collectionGroup but limit to recent
-        // We really need to know if the user is involved. 
-        // We can just show "Your Active Proposals" by filtering in UI if we had the data.
-        // Workaround: Show a nice "Welcome & Actions" dashboard.
-        // User asked for "button of lessons proposed and affiche the list".
+        const unsubscribe = onSnapshot(qProposals, (snapshot) => {
+            if (!conversations.length) return;
 
-    }, [activeConversationId]);
+            const myConvoIds = new Set(conversations.map(c => c.id));
+            const fetched: any[] = []; // Message + UI props
+
+            snapshot.docs.forEach(doc => {
+                const msgData = doc.data() as Message;
+                if (myConvoIds.has(msgData.conversationId)) {
+                    // Check Status
+                    // If status is undefined, treat as pending for rendering?
+                    // We want to show Active proposals? 
+                    // User said "nothing appears".
+                    // Let's show ALL (Pending/Accepted/Expired/etc) but maybe sort?
+                    // Or prioritize Pending?
+                    // Let's mirror the Modal logic: Show all.
+
+                    // Enhance with Conversation Name logic
+                    const convo = conversations.find(c => c.id === msgData.conversationId);
+                    let convoName = convo?.name || 'Chat';
+                    if (convo?.type === 'dm') {
+                        const otherId = convo.participants.find(id => id !== currentUser.id);
+                        const otherUser = availableUsers.find(u => u.id === otherId);
+                        convoName = otherUser ? otherUser.username : 'Private Chat';
+                    }
+
+                    fetched.push({
+                        id: doc.id,
+                        ...msgData,
+                        conversationName: convoName,
+                        status: msgData.proposal?.status || 'pending',
+                        // Flatten proposal details for easier access
+                        pDate: msgData.proposal?.date,
+                        pTime: msgData.proposal?.time,
+                        pLoc: msgData.proposal?.location
+                    });
+                }
+            });
+
+            // Sort by date (asc) for upcoming?
+            fetched.sort((a, b) => {
+                const dateA = new Date(`${a.pDate}T${a.pTime}`);
+                const dateB = new Date(`${b.pDate}T${b.pTime}`);
+                return dateA.getTime() - dateB.getTime();
+            });
+
+            setActiveProposals(fetched);
+        }, (err) => {
+            console.error("Dashboard proposals fetch failed", err);
+            // Optionally set error state or just log
+        });
+
+        return () => unsubscribe();
+    }, [activeConversationId, conversations, availableUsers]);
 
     if (!activeConversationId || !activeConvo) {
         return (
@@ -229,21 +311,61 @@ const ChatArea = ({
                         <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
                             <Clock size={16} className="text-emerald-600" />
                             Active Proposals
+
                         </h3>
-                        {/* Placeholder for now as collectionGroup requires index deployment usually */}
-                        <div className="text-sm text-slate-400 text-center py-4 italic">
-                            No active lesson proposals found.
+
+                        <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                            {activeProposals.length === 0 ? (
+                                <div className="text-sm text-slate-400 text-center py-4 italic">
+                                    No lesson proposals found in your chats.
+                                </div>
+                            ) : (
+                                activeProposals.map((prop) => {
+                                    const isPast = new Date(`${prop.pDate}T${prop.pTime}`) < new Date();
+                                    const statusRaw = prop.status;
+                                    const statusDisplay = isPast ? 'Expired' : statusRaw;
+
+                                    const badgeColor = isPast ? 'bg-slate-100 text-slate-500' :
+                                        statusRaw === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
+                                            statusRaw === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                'bg-amber-100 text-amber-700';
+
+                                    return (
+                                        <div key={prop.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 transition-colors group relative cursor-pointer"
+                                            onClick={() => {
+                                                // Need to navigate. How? ChatArea can't navigate parent state easily without a callback.
+                                                // onStartDM works for DM, but for Group?
+                                                // ActiveConversationId is controlled by parent.
+                                                // We assume user can click Sidebar.
+                                                // Or we can add a callback to ChatAreaProps 'onNavigateTo'?
+                                                // For now, simple toast or visual only.
+                                                // But user wants to SEE them.
+                                                toast.info("Select this chat in the sidebar to view details.");
+                                            }}
+                                        >
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="font-bold text-slate-700 text-sm truncate pr-2">{prop.conversationName}</div>
+                                                <div className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${badgeColor}`}>
+                                                    {statusDisplay}
+                                                </div>
+                                            </div>
+                                            <div className="text-xs text-slate-500 mb-1 flex items-center gap-2">
+                                                <Calendar size={12} /> {prop.pDate} <Clock size={12} /> {prop.pTime}
+                                            </div>
+                                            <div className="text-xs text-slate-400 flex items-center gap-2 truncate">
+                                                <MapPin size={12} /> {prop.pLoc}
+                                            </div>
+                                            <div className="text-[10px] text-slate-400 mt-2 font-medium">Proposed by {prop.senderName}</div>
+                                        </div>
+                                    );
+                                })
+                            )}
                         </div>
 
-                        <button
-                            onClick={() => toast.info("Select a chat to propose a lesson!")}
-                            className="w-full mt-4 py-2 bg-emerald-50 text-emerald-600 font-bold rounded-lg hover:bg-emerald-100 transition-colors text-sm"
-                        >
-                            View All Scheduled Lessons
-                        </button>
+
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 
@@ -308,6 +430,18 @@ const ChatArea = ({
 
                     {messages.map((msg) => {
                         const isMe = msg.senderId === currentUser.id;
+
+                        // Check for expiration
+                        let displayStatus: string = msg.proposal?.status || 'pending';
+                        let isExpired = false;
+                        if (msg.type === 'proposal' && displayStatus === 'pending') {
+                            const proposalDateTime = new Date(`${msg.proposal.date}T${msg.proposal.time}`);
+                            if (new Date() > proposalDateTime) {
+                                displayStatus = 'expired';
+                                isExpired = true;
+                            }
+                        }
+
                         return (
                             <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                                 {!isMe && (
@@ -327,8 +461,10 @@ const ChatArea = ({
                                             {msg.text}
                                         </div>
                                     ) : (
-                                        <div className={`p-6 rounded-2xl bg-white shadow-md border-l-4 w-[280px] sm:w-[320px] ${msg.proposal?.status === 'accepted' ? 'border-emerald-500' :
-                                            msg.proposal?.status === 'rejected' ? 'border-red-500' : 'border-amber-500'
+                                        <div className={`p-6 rounded-2xl bg-white shadow-md border-l-4 w-[280px] sm:w-[320px] ${displayStatus === 'accepted' ? 'border-emerald-500' :
+                                            displayStatus === 'rejected' ? 'border-red-500' :
+                                                displayStatus === 'expired' ? 'border-red-400' :
+                                                    'border-amber-500'
                                             }`}>
                                             <div className="flex items-center gap-2 mb-3 font-bold text-slate-900 text-base">
                                                 <Calendar size={20} className="text-emerald-600" />
@@ -343,14 +479,16 @@ const ChatArea = ({
                                             </p>
 
                                             <div className="flex items-center justify-between gap-4 mt-2 border-t border-slate-100 pt-3">
-                                                <div className={`text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider ${msg.proposal?.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
-                                                    msg.proposal?.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                                                <div className={`text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider ${displayStatus === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
+                                                    displayStatus === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                        displayStatus === 'expired' ? 'bg-red-50 text-red-500 border border-red-100' :
+                                                            'bg-amber-100 text-amber-700'
                                                     }`}>
-                                                    {msg.proposal?.status}
+                                                    {displayStatus}
                                                 </div>
 
-                                                {/* Voting UI */}
-                                                {msg.proposal?.status === 'pending' && (
+                                                {/* Voting UI - Only show if pending and not expired */}
+                                                {displayStatus === 'pending' && !isExpired && (
                                                     <div className="flex gap-3">
                                                         <button
                                                             onClick={() => handleVote(msg.id, 'yes')}
@@ -410,11 +548,20 @@ const ChatArea = ({
                                 <h4 className="font-bold text-slate-700 flex items-center gap-2 mb-3">
                                     <Clock size={18} /> Propose a Time
                                 </h4>
+
+                                <div className="bg-blue-50 text-blue-700 p-3 rounded-lg mb-4 text-xs flex items-start gap-2">
+                                    <Info size={16} className="shrink-0 mt-0.5" />
+                                    <p>
+                                        Please propose lessons at least <span className="font-bold">3 days in advance</span> to ensure court availability (bookings typically happen 48h before).
+                                    </p>
+                                </div>
+
                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <label className="block text-xs font-bold text-slate-500 mb-1">Date</label>
                                         <input
                                             type="date"
+                                            min={new Date().toISOString().split('T')[0]}
                                             value={proposalDate}
                                             onChange={(e) => setProposalDate(e.target.value)}
                                             className="w-full p-2 rounded border border-slate-200 text-sm"
@@ -443,6 +590,13 @@ const ChatArea = ({
                                 <button
                                     onClick={() => {
                                         if (!proposalDate || !proposalTime) return toast.error("Select date and time");
+
+                                        // Validate that the time is not in the past
+                                        const selectedDateTime = new Date(`${proposalDate}T${proposalTime}`);
+                                        if (selectedDateTime < new Date()) {
+                                            return toast.error("Cannot propose a lesson in the past!");
+                                        }
+
                                         const location = (document.getElementById('proposal-location') as HTMLInputElement)?.value || 'Court 1';
                                         sendMessage(
                                             `Proposed a lesson on ${proposalDate} at ${proposalTime} @ ${location}`,

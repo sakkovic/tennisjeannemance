@@ -23,28 +23,22 @@ service cloud.firestore {
 
     // --- RÈGLES UTILISATEURS ---
     match /users/{userId} {
-      // Tout le monde connecté peut voir les profils (pour la liste des joueurs)
       allow read: if isSignedIn();
-      // Seul l'utilisateur peut modifier son propre profil (avatar, etc.)
-      // L'admin peut aussi modifier n'importe qui si besoin (optionnel)
       allow create: if isSignedIn() && request.auth.uid == userId;
       allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
     }
 
     // --- RÈGLES CONVERSATIONS ---
     match /conversations/{conversationId} {
-      // Lire : Si je suis dans les participants
-      allow read: if isSignedIn() && (request.auth.uid in resource.data.participants);
+      allow read: if (isSignedIn() && (request.auth.uid in resource.data.participants)) || isAdmin();
       
-      // Créer : 
-      // - Si c'est un DM (2 participants) : Tout le monde peut
-      // - Si c'est un Groupe (>2 participants) : SEULEMENT l'Admin peut
       allow create: if isSignedIn() && (
         (request.resource.data.participants.size() <= 2) || isAdmin()
       );
 
-      // Mettre à jour (ex: dernier message) : Si je suis participant
-      allow update: if isSignedIn() && (request.auth.uid in resource.data.participants);
+      allow update: if (isSignedIn() && (request.auth.uid in resource.data.participants)) || isAdmin();
+      allow delete: if isAdmin();
 
       // --- RÈGLES MESSAGES (Sous-collection) ---
       match /messages/{messageId} {

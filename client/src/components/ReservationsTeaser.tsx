@@ -58,12 +58,25 @@ const ReservationsTeaser = () => {
 
                         <Button
                             size="lg"
-                            className="bg-[var(--brand-accent)] hover:bg-[var(--brand-primary)] text-white gap-3 px-10 h-16 text-xl shadow-emerald-200 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 rounded-full mb-8"
+                            className="bg-[var(--brand-accent)] hover:bg-[var(--brand-primary)] text-white gap-3 px-10 h-16 text-xl shadow-emerald-200 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 rounded-full mb-4"
                             onClick={() => setLocation('/reservations')}
                         >
                             <CalendarIcon className="w-6 h-6" />
                             Book a Slot Online
                         </Button>
+
+                        <Button
+                            size="lg"
+                            variant="outline"
+                            className="border-2 border-emerald-500 hover:bg-emerald-50 text-emerald-700 gap-3 px-10 h-14 text-lg hover:shadow-lg transition-all hover:-translate-y-1 rounded-full mb-2"
+                            onClick={() => setLocation('/portal')}
+                        >
+                            <MessageCircle className="w-5 h-5" />
+                            Join Players Community
+                        </Button>
+                        <p className="text-sm text-slate-500 mb-8 italic">
+                            Connect with fellow players, share tips, and organize matches together! 🎾
+                        </p>
 
                         <div className="flex items-center justify-center gap-4 mb-6">
                             <div className="h-px bg-slate-200 w-16"></div>

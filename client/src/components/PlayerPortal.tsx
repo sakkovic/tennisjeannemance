@@ -277,6 +277,7 @@ const PlayerPortal = () => {
                         currentUser={currentUser}
                         activeConversationId={activeConversationId}
                         activeConvo={activeConvo}
+                        conversations={conversations}
                         onAddMember={() => setShowAddMemberModal(true)}
                         onShowMembers={() => setShowMembersModal(true)}
                         onBack={() => setActiveConversationId(null)}

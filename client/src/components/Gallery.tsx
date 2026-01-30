@@ -111,13 +111,13 @@ const Gallery = () => {
             {images.map((image, index) => (
               <div key={index} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.33%] min-w-0 pl-6">
                 <div
-                  className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[4/3] bg-gray-800"
+                  className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[3/4] md:aspect-[4/3] bg-gray-800"
                   onClick={() => setSelectedImage(image)}
                 >
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
