@@ -3,22 +3,22 @@ import { motion } from 'framer-motion';
 const ProfessionalExperience = () => {
     const experiences = [
         {
-            period: "01/2025 - Présent",
-            title: "Entraîneur de Tennis",
-            organization: "Sani Sport, Montréal",
-            description: "Organisation et animation des cours pour joueurs de niveaux variés (Récréative et Compétitive)"
+            period: "01/2025 - Present",
+            title: "Tennis Coach",
+            organization: "Sani Sport, Montreal",
+            description: "Organizing and leading sessions for players of all levels (Recreational and Competitive)"
         },
         {
             period: "02/2024 - 06/2024",
-            title: "Entraîneur de Tennis",
-            organization: "TENNIS13, Montréal",
-            description: "Coaching de joueurs de tous niveaux dans un environnement professionnel"
+            title: "Tennis Coach",
+            organization: "TENNIS13, Montreal",
+            description: "Coaching players of all levels in a professional environment"
         },
         {
             period: "10/2018 - 07/2023",
-            title: "Entraîneur de Tennis",
-            organization: "Tennis Club de Monastir, Tunisie",
-            description: "Sparring Partner aux Tournois Future M15 et M25. Capitaine de l'équipe - Demi-Finaliste du Championnat tunisien U12 en 2023"
+            title: "Tennis Coach",
+            organization: "Tennis Club de Monastir, Tunisia",
+            description: "Sparring Partner at Future M15 and M25 Tournaments. Team Captain — Semi-Finalist of the Tunisian U12 Championship in 2023"
         }
     ];
 

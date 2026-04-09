@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { useLocation } from 'wouter';
 
 const Footer = () => {
@@ -8,11 +8,11 @@ const Footer = () => {
     if (window.location.pathname !== '/') {
       setLocation('/');
       setTimeout(() => {
-        const section = document.getElementById(sectionId);
+        const section = document.querySelector(`[data-section="${sectionId}"]`);
         if (section) section.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
-      const section = document.getElementById(sectionId);
+      const section = document.querySelector(`[data-section="${sectionId}"]`);
       if (section) section.scrollIntoView({ behavior: 'smooth' });
     }
   };
@@ -28,14 +28,11 @@ const Footer = () => {
               Professional tennis coaching in Montreal. Helping players of all levels achieve their full potential through personalized training and technical excellence.
             </p>
             <div className="flex space-x-4 pt-2">
-              <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-emerald-600 transition-colors text-white">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-emerald-600 transition-colors text-white">
+              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="bg-slate-800 p-2 rounded-full hover:bg-emerald-600 transition-colors text-white" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-emerald-600 transition-colors text-white">
-                <Linkedin size={20} />
+              <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="bg-slate-800 p-2 rounded-full hover:bg-emerald-600 transition-colors text-white" aria-label="Facebook">
+                <Facebook size={20} />
               </a>
             </div>
           </div>

@@ -15,7 +15,7 @@ const About = () => {
             <h2 className="text-4xl font-normal mb-6">About Me</h2>
             <div className="text-lg space-y-4">
               <p>
-                I'm Mohamed Anis Sakka, a passionate professional tennis coach with <strong style={{ color: 'var(--brand-accent)' }}>20+ years of playing experience</strong> and <strong style={{ color: 'var(--brand-accent)' }}>5+ years of coaching expertise</strong>. Based in Montreal, I'm dedicated to helping players of all levels achieve their tennis goals.
+                I'm Mohamed Anis Sakka, a passionate professional tennis coach with <strong style={{ color: 'var(--brand-accent)' }}>20+ years of playing experience</strong> and <strong style={{ color: 'var(--brand-accent)' }}>9+ years of coaching expertise</strong>. Based in Montreal, I'm dedicated to helping players of all levels achieve their tennis goals.
               </p>
               <p>
                 My coaching philosophy combines <strong style={{ color: 'var(--brand-accent)' }}>technical excellence, tactical awareness, and mental resilience</strong>. I've successfully trained multiple Tunisian national champions and have extensive experience working with young players in competitive development programs.

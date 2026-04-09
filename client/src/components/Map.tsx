@@ -35,6 +35,11 @@ const locations = [
         name: "Tennis - parc Jeanne-Mance",
         address: "4422 Av. de l'Esplanade, Montréal, QC H2W 1B9",
         coords: [45.5167, -73.5864] as [number, number]
+    },
+    {
+        name: "Parc Warren-Allmand (Somerled)",
+        address: "4800 Avenue de Hampton, Montréal, QC H3X 3P7",
+        coords: [45.4741219, -73.6349076] as [number, number]
     }
 ];
 

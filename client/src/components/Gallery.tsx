@@ -24,48 +24,48 @@ const Gallery = () => {
   const images: GalleryImage[] = [
     {
       src: '/gallery/anis_anes_tunisia_champion_u15.jpeg',
-      alt: 'Champion de Tunisie U15',
-      description: 'Victoire au championnat de Tunisie U15 avec Anes'
+      alt: 'Tunisia U15 Champion',
+      description: 'Tunisia U15 Championship victory with Anes'
     },
     {
       src: '/gallery/anis_lina_maroc.jpeg',
-      alt: 'Tournoi au Maroc',
-      description: 'Sparing session avec la championne du Maroc Lina'
+      alt: 'Tournament in Morocco',
+      description: 'Sparring session with Morocco champion Lina'
     },
     {
       src: '/gallery/anis_selim_benromdhan.jpeg',
-      alt: 'Avec Selim Ben Romdhane',
-      description: 'Entraînement avec Selim Ben Romdhane'
+      alt: 'With Selim Ben Romdhane',
+      description: 'Training session with Selim Ben Romdhane'
     },
     {
       src: '/gallery/anis_belek_derek.jpeg',
-      alt: 'Session de groupe',
-      description: 'Session d\'entraînement avec Belek et Derek'
+      alt: 'Group session',
+      description: 'Training session with Belek and Derek'
     },
     {
       src: '/gallery/anis_soff_sousse.jpeg',
-      alt: 'Tournoi à Sousse',
-      description: 'Compétition au Tennis Club de Sousse'
+      alt: 'Tournament in Sousse',
+      description: 'Competition at Sousse Tennis Club'
     },
     {
       src: '/gallery/aea2f9fe-4433-4df0-a946-ee9bddaf6b41.jpg',
-      alt: 'Entraînement sur court extérieur',
-      description: 'Session d\'entraînement avec mes élèves sur court extérieur'
+      alt: 'Outdoor court training',
+      description: 'Training session with my students on the outdoor court'
     },
     {
       src: '/gallery/e1c1d9ab-8d61-4883-8214-c430b0bafbcf.jpg',
-      alt: 'Champion avec trophée',
-      description: 'Célébration de victoire avec un de mes élèves'
+      alt: 'Champion with trophy',
+      description: 'Victory celebration with one of my students'
     },
     {
       src: '/gallery/0a7f6124-43bd-4d87-b804-6e84e9b1412d.jpg',
-      alt: 'Match final au Tennis Club de Tunis',
-      description: 'Finale au Tennis Club de Tunis'
+      alt: 'Final match at Tunis Tennis Club',
+      description: 'Final at the Tunis Tennis Club'
     },
     {
       src: '/gallery/8b001041-a0f7-4676-a76b-0beecb6f6f80.jpg',
-      alt: 'Rogers Cup à Montréal',
-      description: 'Au Rogers Cup à Montréal - Expérience internationale'
+      alt: 'Rogers Cup in Montreal',
+      description: 'At Rogers Cup in Montreal — International experience'
     }
   ];
 
@@ -81,10 +81,10 @@ const Gallery = () => {
         <div className="flex justify-between items-end mb-12">
           <div>
             <h2 className="text-4xl md:text-5xl font-medium mb-4 text-white">
-              Galerie Photos
+              Photo Gallery
             </h2>
             <p className="text-lg md:text-xl text-white/80 max-w-3xl">
-              Découvrez mes sessions d'entraînement, mes élèves champions et les moments forts de ma carrière de coach.
+              Discover my training sessions, champion students, and career highlights as a coach.
             </p>
           </div>
 
@@ -117,7 +117,7 @@ const Gallery = () => {
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -159,7 +159,7 @@ const Gallery = () => {
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors p-2"
             onClick={() => setSelectedImage(null)}
-            aria-label="Fermer"
+            aria-label="Close"
           >
             <X size={32} />
           </button>

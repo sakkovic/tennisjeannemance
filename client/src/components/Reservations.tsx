@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { MessageCircle, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,11 @@ const Reservations = () => {
 
     return (
         <section className="py-12 px-4 md:px-6 max-w-7xl mx-auto min-h-[80vh] flex flex-col">
+            <Helmet>
+                <title>Book a Tennis Lesson | Sakka Tennis Montreal</title>
+                <meta name="description" content="Reserve your private or group tennis lesson with Mohamed Anis Sakka in Montreal. Check availability and easily book online." />
+                <link rel="canonical" href="https://www.tennissakkamtl.com/reservations" />
+            </Helmet>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

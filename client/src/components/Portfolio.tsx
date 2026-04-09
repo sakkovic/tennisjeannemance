@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import placeholderProject from '../assets/placeholder-project.webp';
+
 
 interface PortfolioSlide {
   id: number;
@@ -48,7 +48,7 @@ const Portfolio = () => {
       tags: ["Professional Player", "National Rankings", "Tournament Winner"],
       background: "linear-gradient(135deg, var(--chart-1) 0%, var(--primary) 100%)",
       isNDA: false,
-      image: placeholderProject
+      image: "/gallery/championnattunisie.jpg"
     },
     {
       id: 4,
@@ -58,7 +58,7 @@ const Portfolio = () => {
       tags: ["WTA Events", "International Tennis", "Professional Tournaments"],
       background: "linear-gradient(135deg, var(--chart-3) 0%, var(--chart-5) 100%)",
       isNDA: false,
-      image: placeholderProject
+      image: "/gallery/8b001041-a0f7-4676-a76b-0beecb6f6f80.jpg"
     }
   ];
 

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /reservations
+Disallow: /portal
+Disallow: /admin
+
+Sitemap: https://www.tennissakkamtl.com/sitemap.xml

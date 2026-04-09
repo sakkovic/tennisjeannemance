@@ -17,27 +17,41 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
         {/* Text Content */}
         <div className="relative z-10 text-left">
-          <h1
+          <motion.h1
             className="text-6xl md:text-8xl font-medium mb-4 leading-tight"
             style={{ fontWeight: 500, color: 'var(--brand-accent)' }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             Tennis
-          </h1>
-          <h2
+          </motion.h1>
+          <motion.h2
             className="text-4xl md:text-6xl font-medium mb-8 leading-tight"
             style={{ fontWeight: 500, color: 'var(--brand-dark)' }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
           >
             Coaching
             <span className="block text-2xl md:text-3xl mt-2 opacity-80">
               transforming players into champions.
             </span>
-          </h2>
-          <p
+          </motion.h2>
+          <motion.p
             className="text-lg md:text-xl mb-12 max-w-xl leading-relaxed text-gray-600"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
           >
             I have <span className="font-semibold" style={{ color: 'var(--brand-accent)' }}>20+ years of playing experience</span> and <span className="font-semibold" style={{ color: 'var(--brand-accent)' }}>5+ years of coaching</span>. I specialize in developing young players and helping athletes of all levels reach their full potential on the court.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+          </motion.p>
+          <motion.div
+            className="flex flex-col sm:flex-row gap-6 items-start sm:items-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.45, ease: 'easeOut' }}
+          >
             <button
               onClick={scrollToContact}
               className="px-8 py-4 bg-[var(--brand-accent)] text-white rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
@@ -51,17 +65,22 @@ const Hero = () => {
               or book a lesson
               <ArrowRight className="w-5 h-5" />
             </button>
-          </div>
+          </motion.div>
         </div>
 
         {/* Image Content */}
-        <div className="relative h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl">
+        <motion.div
+          className="relative h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
+        >
           <img
             src={heroBg}
             alt="Tennis Court"
             className="w-full h-full object-cover"
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

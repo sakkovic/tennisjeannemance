@@ -68,8 +68,8 @@ const AdminDashboard = () => {
         );
         const unsubProposals = onSnapshot(qProposals, (snapshot) => {
             const fetchedProps = snapshot.docs.map(d => ({
-                id: d.id,
-                ...d.data() as Message
+                ...d.data() as Message,
+                id: d.id
             }));
             // Sort by creation time (desc)
             fetchedProps.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);

@@ -9,8 +9,11 @@ const MobileBookButton = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            // Show button after scrolling past the hero section (approx 500px)
-            const shouldShow = window.scrollY > 500;
+            const scrollY = window.scrollY;
+            const pageHeight = document.documentElement.scrollHeight;
+            const viewportHeight = window.innerHeight;
+            // Show after hero section (500px) but hide near footer (last 600px)
+            const shouldShow = scrollY > 500 && scrollY < (pageHeight - viewportHeight - 600);
             setIsVisible(shouldShow);
         };
 
@@ -30,7 +33,7 @@ const MobileBookButton = () => {
                 >
                     <button
                         onClick={() => setLocation('/reservations')}
-                        className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-xl font-bold text-sm hover:bg-emerald-700 transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 bg-emerald-600/95 backdrop-blur-sm text-white px-5 py-2.5 rounded-full shadow-xl font-bold text-sm hover:bg-emerald-700 transition-colors whitespace-nowrap"
                     >
                         <Calendar size={18} />
                         Book a Session

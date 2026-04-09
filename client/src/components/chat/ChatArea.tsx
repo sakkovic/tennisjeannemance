@@ -264,8 +264,8 @@ const ChatArea = ({
                     }
 
                     fetched.push({
-                        id: doc.id,
                         ...msgData,
+                        id: doc.id,
                         conversationName: convoName,
                         status: msgData.proposal?.status || 'pending',
                         // Flatten proposal details for easier access
@@ -434,7 +434,7 @@ const ChatArea = ({
                         // Check for expiration
                         let displayStatus: string = msg.proposal?.status || 'pending';
                         let isExpired = false;
-                        if (msg.type === 'proposal' && displayStatus === 'pending') {
+                        if (msg.type === 'proposal' && displayStatus === 'pending' && msg.proposal) {
                             const proposalDateTime = new Date(`${msg.proposal.date}T${msg.proposal.time}`);
                             if (new Date() > proposalDateTime) {
                                 displayStatus = 'expired';
