@@ -93,36 +93,54 @@ const Contact = () => {
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl opacity-10 -ml-10 -mb-10"></div>
 
               <h3 className="text-xl font-bold mb-4 relative z-10 text-slate-900">Training Locations</h3>
-              <ul className="space-y-4 relative z-10 text-slate-700">
-                <li className="flex items-start space-x-3">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
-                  <div>
-                    <span className="font-bold block text-slate-900">Sani Sport Brossard</span>
-                    <span className="text-sm">7777 Bd Marie-Victorin, Brossard, QC J4W 3H3</span>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
-                  <div>
-                    <span className="font-bold block text-slate-900">Stade IGA</span>
-                    <span className="text-sm">285 Rue Gary-Carter, Montréal, QC H2R 2W1</span>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
-                  <div>
-                    <span className="font-bold block text-slate-900">Complexe Sportif Longueuil</span>
-                    <span className="text-sm">550 Boulevard Curé-Poirier O, Longueuil, QC J4J 2H6</span>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
-                  <div>
-                    <span className="font-bold block text-slate-900">Tennis - parc Jeanne-Mance</span>
-                    <span className="text-sm">4422 Av. de l'Esplanade, Montréal, QC H2W 1B9</span>
-                  </div>
-                </li>
-              </ul>
+              <div className="space-y-6 relative z-10 text-slate-700">
+                <div>
+                  <h4 className="font-bold text-emerald-700 uppercase tracking-wide text-sm mb-3">Indoor</h4>
+                  <ul className="space-y-3">
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
+                      <div>
+                        <span className="font-bold block text-slate-900">Sani Sport Brossard</span>
+                        <span className="text-sm text-slate-600">7777 Bd Marie-Victorin, Brossard, QC J4W 3H3</span>
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
+                      <div>
+                        <span className="font-bold block text-slate-900">Complexe Sportif Longueuil</span>
+                        <span className="text-sm text-slate-600">550 Boulevard Curé-Poirier O, Longueuil, QC J4J 2H6</span>
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
+                      <div>
+                        <span className="font-bold block text-slate-900">Stade IGA</span>
+                        <span className="text-sm text-slate-600">285 Rue Gary-Carter, Montréal, QC H2R 2W1</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-emerald-700 uppercase tracking-wide text-sm mb-3">Outdoor</h4>
+                  <ul className="space-y-3">
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
+                      <div>
+                        <span className="font-bold block text-slate-900">Parc Warren-Allmand (Somerled)</span>
+                        <span className="text-sm text-slate-600">4800 Avenue de Hampton, Montréal, QC H3X 3P7</span>
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full mt-2 shrink-0"></span>
+                      <div>
+                        <span className="font-bold block text-slate-900">Tennis - parc Jeanne-Mance</span>
+                        <span className="text-sm text-slate-600">4422 Av. de l'Esplanade, Montréal, QC H2W 1B9</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </motion.div>
 
