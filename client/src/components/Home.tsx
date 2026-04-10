@@ -24,11 +24,11 @@ const Home = () => {
             <div data-section="about" className="section-dark">
                 <About />
             </div>
-            <div data-section="portfolio" className="section-dark">
-                <Portfolio />
-            </div>
             <div data-section="experience" className="section-dark">
                 <ProfessionalExperience />
+            </div>
+            <div data-section="portfolio" className="section-dark">
+                <Portfolio />
             </div>
             <div data-section="testimonials" className="section-dark">
                 <Testimonials />
