@@ -35,7 +35,9 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
       setTimeout(() => {
         const section = document.querySelector(`[data-section="${sectionId}"]`);
         if (section) {
-          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const yOffset = -100;
+          const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
         }
       }, 100);
       return;
@@ -43,10 +45,9 @@ const Navigation = forwardRef<HTMLElement>((props, ref) => {
 
     const section = document.querySelector(`[data-section="${sectionId}"]`);
     if (section) {
-      section.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+      const yOffset = -100;
+      const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 

@@ -9,11 +9,17 @@ const Footer = () => {
       setLocation('/');
       setTimeout(() => {
         const section = document.querySelector(`[data-section="${sectionId}"]`);
-        if (section) section.scrollIntoView({ behavior: 'smooth' });
+        if (section) {
+          const y = section.getBoundingClientRect().top + window.pageYOffset - 100;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
       }, 100);
     } else {
       const section = document.querySelector(`[data-section="${sectionId}"]`);
-      if (section) section.scrollIntoView({ behavior: 'smooth' });
+      if (section) {
+        const y = section.getBoundingClientRect().top + window.pageYOffset - 100;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
     }
   };
 
