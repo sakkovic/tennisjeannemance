@@ -46,7 +46,7 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
           >
-            I have <span className="font-semibold" style={{ color: 'var(--brand-accent)' }}>20+ years of playing experience</span> and <span className="font-semibold" style={{ color: 'var(--brand-accent)' }}>5+ years of coaching</span>. I specialize in developing young players and helping athletes of all levels reach their full potential on the court.
+            I have <span className="font-semibold" style={{ color: 'var(--brand-accent)' }}>20+ years of playing experience</span> and <span className="font-semibold" style={{ color: 'var(--brand-accent)' }}>9+ years of coaching</span>. I specialize in developing young players and helping athletes of all levels reach their full potential on the court.
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row gap-6 items-start sm:items-center"
