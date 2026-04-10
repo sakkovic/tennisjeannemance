@@ -32,30 +32,28 @@ const ProfessionalExperience = () => {
                 >
                     <h3 className="text-4xl md:text-5xl font-medium mb-12 text-white text-center md:text-left">Professional Experience</h3>
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-                        {/* Left Column: Title & Locations */}
-                        <div className="lg:col-span-5 space-y-8">
+                    <div className="flex flex-col gap-8 md:gap-12">
+                        {/* First Row: Title & Locations */}
+                        <div className="w-full">
                             <div className="glass-panel-dark p-8 md:p-10 rounded-3xl border border-white/5 relative overflow-hidden h-full">
                                 <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--brand-accent)] rounded-full blur-[80px] opacity-20 -mr-10 -mt-10"></div>
                                 <h4 className="text-3xl md:text-4xl font-bold text-white mb-2">Tennis Coach</h4>
                                 <p className="text-[var(--brand-accent)] font-medium text-lg md:text-xl mb-10 tracking-wide">Career Timeline</p>
                                 
-                                <div className="space-y-8 relative before:absolute before:inset-0 before:left-[7px] md:before:left-[9px] before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[var(--brand-accent)] before:via-[var(--brand-accent)]/30 before:to-transparent">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                     {locations.map((loc, index) => (
-                                        <div key={index} className="relative flex items-start pl-8 md:pl-10 group">
-                                            <div className="absolute left-0 top-1.5 flex items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded-full border-[3px] border-[var(--brand-accent)] bg-slate-900 shadow-[0_0_15px_rgba(209,241,50,0.5)] z-10 transition-transform duration-300 group-hover:scale-125"></div>
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-white leading-snug text-lg md:text-xl">{loc.organization}</span>
-                                                <span className="text-sm md:text-base text-emerald-400 mt-1.5 font-medium">{loc.period}</span>
-                                            </div>
+                                        <div key={index} className="relative flex flex-col items-start p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-[var(--brand-accent)]/50 transition-colors">
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-full border-[3px] border-[var(--brand-accent)] bg-slate-900 shadow-[0_0_15px_rgba(209,241,50,0.5)] z-10 mb-4"></div>
+                                            <span className="font-bold text-white leading-snug text-lg md:text-xl mb-2">{loc.organization}</span>
+                                            <span className="text-sm md:text-base text-emerald-400 font-medium mt-auto">{loc.period}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Right Column: Expertise & Achievements */}
-                        <div className="lg:col-span-7">
+                        {/* Second Row: Expertise & Achievements */}
+                        <div className="w-full">
                             <div className="glass-panel-dark p-8 md:p-10 rounded-3xl border border-white/5 h-full relative overflow-hidden">
                                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-500 rounded-full blur-[80px] opacity-10 -ml-10 -mb-10"></div>
                                 <h4 className="text-2xl md:text-3xl font-bold text-white mb-8 flex items-center">
@@ -63,9 +61,9 @@ const ProfessionalExperience = () => {
                                     Coaching Expertise
                                 </h4>
                                 
-                                <ul className="space-y-5 relative z-10">
+                                <ul className="columns-1 md:columns-2 gap-8 space-y-4">
                                     {expertiseList.map((item, index) => (
-                                        <li key={index} className="flex items-start">
+                                        <li key={index} className="flex items-start break-inside-avoid">
                                             <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 mt-0.5 mr-4 shrink-0 text-[var(--brand-accent)]" />
                                             <span className="text-white/80 leading-relaxed text-base md:text-lg">{item}</span>
                                         </li>
