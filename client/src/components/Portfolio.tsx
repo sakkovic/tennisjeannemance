@@ -222,7 +222,7 @@ const Portfolio = () => {
                     >
                       <img
                         src={portfolioSlides[currentSlide].image}
-                        alt="Project Preview"
+                        alt={`${portfolioSlides[currentSlide].title} - Sakka Tennis Coaching`}
                         className="w-full h-full object-cover"
                       />
                     </motion.div>

@@ -17,27 +17,29 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
         {/* Text Content */}
         <div className="relative z-10 text-left">
-          <motion.h1
-            className="text-6xl md:text-8xl font-medium mb-4 leading-tight"
-            style={{ fontWeight: 500, color: 'var(--brand-accent)' }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
-            Tennis
-          </motion.h1>
-          <motion.h2
-            className="text-4xl md:text-6xl font-medium mb-8 leading-tight"
-            style={{ fontWeight: 500, color: 'var(--brand-dark)' }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-          >
-            Coaching
-            <span className="block text-2xl md:text-3xl mt-2 opacity-80">
-              transforming players into champions.
-            </span>
-          </motion.h2>
+          <h1 className="flex flex-col text-left m-0 p-0">
+            <motion.span
+              className="text-6xl md:text-8xl font-medium mb-4 leading-tight block"
+              style={{ fontWeight: 500, color: 'var(--brand-accent)' }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            >
+              Tennis
+            </motion.span>
+            <motion.span
+              className="text-4xl md:text-6xl font-medium mb-8 leading-tight block"
+              style={{ fontWeight: 500, color: 'var(--brand-dark)' }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
+            >
+              Coaching
+              <span className="block text-2xl md:text-3xl mt-2 opacity-80 font-normal">
+                in Montreal.
+              </span>
+            </motion.span>
+          </h1>
           <motion.p
             className="text-lg md:text-xl mb-12 max-w-xl leading-relaxed text-gray-600"
             initial={{ opacity: 0, y: 20 }}
@@ -77,7 +79,7 @@ const Hero = () => {
         >
           <img
             src={heroBg}
-            alt="Tennis Court"
+            alt="Professional tennis coaching session in Montreal by Mohamed Anis Sakka"
             className="w-full h-full object-cover"
           />
         </motion.div>
