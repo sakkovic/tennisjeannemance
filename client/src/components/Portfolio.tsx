@@ -169,7 +169,7 @@ const Portfolio = () => {
 
                 <button
                   onClick={prevSlide}
-                  className="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 md:p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 md:p-3 rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100"
                   aria-label="Previous slide"
                 >
                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
@@ -177,7 +177,7 @@ const Portfolio = () => {
 
                 <button
                   onClick={nextSlide}
-                  className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 md:p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 md:p-3 rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100"
                   aria-label="Next slide"
                 >
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />

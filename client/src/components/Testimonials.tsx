@@ -42,45 +42,55 @@ const Testimonials = () => {
       title: "Student",
       initials: "S",
       color: "bg-purple-600"
+    },
+    {
+      id: 5,
+      quote: "Perfect! Anis was very encouraging and patient. Highly recommend!",
+      name: "Yera",
+      title: "Student",
+      initials: "Y",
+      color: "bg-rose-600"
     }
   ];
 
   return (
     <section className="pt-16 pb-20 px-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-medium mb-12 text-white">What Players Say About Me</h2>
-        <div className="columns-1 md:columns-2 gap-8 space-y-8">
+        
+        {/* Changed layout from columns-1 md:columns-2 to columns-1 sm:columns-2 lg:columns-3 */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
           {testimonials.map((testimonial) => (
             <motion.div
               key={testimonial.id}
-              className="glass-panel-dark p-8 md:p-10 rounded-2xl break-inside-avoid mb-8 relative overflow-hidden border border-white/5"
+              className="glass-panel-dark p-6 rounded-2xl break-inside-avoid mb-6 relative overflow-hidden border border-white/5"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: testimonial.id * 0.1 }}
               viewport={{ once: true }}
             >
               {/* Decorative quote mark */}
-              <div className="absolute top-4 right-6 text-7xl font-serif text-white/5 select-none leading-none">"</div>
+              <div className="absolute top-2 right-4 text-5xl font-serif text-white/5 select-none leading-none">"</div>
               
-              <div className="flex gap-1 mb-6">
+              <div className="flex gap-1 mb-4">
                 {[1,2,3,4,5].map(star => (
-                  <svg key={star} className="w-5 h-5 text-amber-400 fill-current drop-shadow-sm" viewBox="0 0 20 20">
+                  <svg key={star} className="w-4 h-4 text-amber-400 fill-current drop-shadow-sm" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
               </div>
 
-              <blockquote className="text-xl font-light leading-relaxed mb-8 text-white/90 relative z-10 italic">
+              <blockquote className="text-base font-light leading-relaxed mb-6 text-white/90 relative z-10 italic">
                 "{testimonial.quote}"
               </blockquote>
               
-              <div className="flex items-center border-t border-white/10 pt-6 mt-auto">
-                <div className={`w-14 h-14 rounded-full mr-5 flex items-center justify-center text-white font-bold text-xl shadow-lg ${testimonial.color}`}>
+              <div className="flex items-center border-t border-white/10 pt-4 mt-auto">
+                <div className={`w-10 h-10 rounded-full mr-4 flex items-center justify-center text-white font-bold text-sm shadow-lg ${testimonial.color}`}>
                   {testimonial.initials}
                 </div>
                 <div>
-                  <div className="font-medium text-white text-lg tracking-wide">{testimonial.name}</div>
-                  <div className="text-emerald-400 font-medium text-sm tracking-widest uppercase mt-1">{testimonial.title}</div>
+                  <div className="font-medium text-white text-base tracking-wide">{testimonial.name}</div>
+                  <div className="text-emerald-400 font-medium text-xs tracking-widest uppercase mt-0.5">{testimonial.title}</div>
                 </div>
               </div>
             </motion.div>
