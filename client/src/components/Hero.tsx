@@ -13,7 +13,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-start overflow-hidden bg-[var(--background)] pt-6">
+    <section className="relative flex items-start overflow-hidden bg-[var(--background)] pt-6 pb-8">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
         {/* Text Content */}
         <div className="relative z-10 text-left">

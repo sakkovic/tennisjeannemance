@@ -70,7 +70,7 @@ const Gallery = () => {
   ];
 
   return (
-    <section id="gallery" className="section-dark px-6 py-16">
+    <section id="gallery" className="section-dark px-6 py-8">
       <motion.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
