@@ -70,7 +70,7 @@ const Gallery = () => {
   ];
 
   return (
-    <section id="gallery" className="section-dark px-6 py-8">
+    <section id="gallery" className="section-dark px-6 py-12">
       <motion.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
@@ -111,7 +111,7 @@ const Gallery = () => {
             {images.map((image, index) => (
               <div key={index} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.33%] min-w-0 pl-6">
                 <div
-                  className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[3/4] md:aspect-[4/3] bg-gray-800"
+                  className="group relative overflow-hidden rounded-2xl cursor-pointer md:aspect-[4/3] aspect-[3/4] bg-gray-800" style={{height: '380px'}}
                   onClick={() => setSelectedImage(image)}
                 >
                   <img
