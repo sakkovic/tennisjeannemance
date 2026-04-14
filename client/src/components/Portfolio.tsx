@@ -116,7 +116,7 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <section className="min-h-screen px-6 pt-20 pb-16">
+    <section className="min-h-screen px-6 pt-10 pb-10">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium">My Achievements</h2>

@@ -107,7 +107,7 @@ const Testimonials = () => {
   );
 
   return (
-    <section className="py-12 md:py-16 px-6">
+    <section className="py-8 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <h2 className="text-4xl md:text-5xl font-medium text-white">What Players Say About Me</h2>
