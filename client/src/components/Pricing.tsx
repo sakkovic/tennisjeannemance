@@ -98,24 +98,12 @@ const Pricing = () => {
 
                                 <button
                                     onClick={() => setLocation('/reservations')}
-                                    className={`w-full py-3 rounded-lg font-semibold transition-colors mb-8 ${plan.popular
+                                    className={`w-full py-3 rounded-lg font-semibold transition-colors ${plan.popular
                                         ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                                         : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
                                         }`}>
                                     Book Now
                                 </button>
-
-                                <div className="space-y-4">
-                                    {plan.features.map((feature, idx) => (
-                                        <div key={idx} className="flex items-start">
-                                            <div className={`mt-1 mr-3 p-1 rounded-full ${plan.popular ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
-                                                }`}>
-                                                <Check size={14} strokeWidth={3} />
-                                            </div>
-                                            <span className="text-slate-600 text-sm">{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
                             </div>
                         </motion.div>
                     ))}
