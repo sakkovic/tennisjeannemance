@@ -112,6 +112,21 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDeleteProposal = async (conversationId: string, messageId: string) => {
+        if (!conversationId || !messageId) {
+            return toast.error("Missing IDs to delete this proposal");
+        }
+        if (!confirm("Are you sure you want to delete this proposal? This cannot be undone.")) return;
+
+        try {
+            await deleteDoc(doc(db, 'conversations', conversationId, 'messages', messageId));
+            toast.success("Proposal deleted");
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete proposal");
+        }
+    };
+
     const startEditing = (conversation: Conversation) => {
         setEditingChannelId(conversation.id);
         setEditName(conversation.name || '');
@@ -484,6 +499,17 @@ const AdminDashboard = () => {
                                         const otherUser = users.find(u => u.id === otherId);
                                         convoName = otherUser ? `Chat with ${otherUser.username}` : 'Private Chat';
                                     }
+                                    // Check if proposal is expired (> 24 hours past its date)
+                                    let displayStatus = prop.proposal?.status || 'pending';
+                                    if (displayStatus === 'pending' && prop.proposal?.date) {
+                                        const propDate = new Date(`${prop.proposal.date}T${prop.proposal.time || '23:59'}`);
+                                        const now = new Date();
+                                        const msInDay = 24 * 60 * 60 * 1000;
+                                        if (now.getTime() - propDate.getTime() > msInDay) {
+                                            displayStatus = 'expired';
+                                        }
+                                    }
+
                                     return (
                                         <div key={prop.id} className="p-4 hover:bg-slate-50 transition-colors">
                                             <div className="grid md:grid-cols-12 gap-4 items-center">
@@ -496,13 +522,21 @@ const AdminDashboard = () => {
                                                 <div className="col-span-2 text-sm font-medium">
                                                     {prop.proposal?.date} <span className="opacity-50">at</span> {prop.proposal?.time}
                                                 </div>
-                                                <div className="col-span-2 text-right">
-                                                    <span className={`text-xs px-2 py-1 rounded font-bold uppercase ${prop.proposal?.status === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
-                                                            prop.proposal?.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                <div className="col-span-2 text-right flex items-center justify-end gap-2">
+                                                    <span className={`text-xs px-2 py-1 rounded font-bold uppercase ${displayStatus === 'accepted' ? 'bg-emerald-100 text-emerald-700' :
+                                                            displayStatus === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                            displayStatus === 'expired' ? 'bg-slate-200 text-slate-500' :
                                                                 'bg-amber-100 text-amber-700'
                                                         }`}>
-                                                        {prop.proposal?.status || 'pending'}
+                                                        {displayStatus}
                                                     </span>
+                                                    <button
+                                                        onClick={() => handleDeleteProposal(prop.conversationId, prop.id)}
+                                                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Delete Proposal"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
