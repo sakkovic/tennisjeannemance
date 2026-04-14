@@ -126,7 +126,7 @@ const Pricing = () => {
                             "Mental coaching and match stress management",
                             "High-intensity drills and live ball sparring",
                             "Flexible scheduling and priority booking",
-                            "Focused on rapid improvement in a fun atmosphere"
+                            "Fun and interactive lessons designed to build confidence in new players"
                         ].map((benefit, idx) => (
                             <div key={idx} className="flex items-start">
                                 <div className="mt-1 mr-3 p-1 rounded-full bg-emerald-100 text-emerald-600 shrink-0">
