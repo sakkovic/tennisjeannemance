@@ -108,6 +108,33 @@ const Pricing = () => {
                         </motion.div>
                     ))}
                 </div>
+
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="mt-16 max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200"
+                >
+                    <h3 className="text-2xl font-bold text-slate-900 mb-6 text-center">What's Included in My Training</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        {[
+                            "Personalized technical & tactical analysis",
+                            "Video analysis and progress tracking",
+                            "Match play situations and strategic positioning",
+                            "Fitness, conditioning, and equipment advice",
+                            "Flexible scheduling and priority booking",
+                            "Focused on rapid improvement in a fun atmosphere"
+                        ].map((benefit, idx) => (
+                            <div key={idx} className="flex items-start">
+                                <div className="mt-1 mr-3 p-1 rounded-full bg-emerald-100 text-emerald-600 shrink-0">
+                                    <Check size={14} strokeWidth={3} />
+                                </div>
+                                <span className="text-slate-700 font-medium">{benefit}</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
             </div>
         </section>
     );
