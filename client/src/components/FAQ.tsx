@@ -14,7 +14,7 @@ const FAQ = () => {
         },
         {
             question: "Where do the lessons take place?",
-            answer: "I primarily teach at Sani Sport. However, I am also available to travel to private courts or other clubs in the Montreal area upon request (additional travel fees may apply)."
+            answer: "I primarily teach at Jeanne Mance and Warren-Allmand Somerland parcs. However, I am also available to travel to private courts or other clubs in the Montreal area upon request (additional travel fees may apply)."
         },
         {
             question: "What is your cancellation policy?",
