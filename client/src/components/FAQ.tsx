@@ -37,7 +37,7 @@ const FAQ = () => {
     };
 
     return (
-        <section id="faq" className="py-16 bg-white">
+        <section id="faq" className="py-12 md:py-16 bg-white">
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
