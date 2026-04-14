@@ -123,6 +123,8 @@ const Pricing = () => {
                             "Video analysis and progress tracking",
                             "Match play situations and strategic positioning",
                             "Fitness, conditioning, and equipment advice",
+                            "Mental coaching and match stress management",
+                            "High-intensity drills and live ball sparring",
                             "Flexible scheduling and priority booking",
                             "Focused on rapid improvement in a fun atmosphere"
                         ].map((benefit, idx) => (
