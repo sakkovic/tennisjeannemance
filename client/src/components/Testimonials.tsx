@@ -135,7 +135,7 @@ const Testimonials = () => {
           )}
         </div>
         
-        <div className="min-h-[600px]">
+        <div className="relative min-h-[250px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}
