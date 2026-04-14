@@ -43,7 +43,6 @@ const ProfessionalExperience = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                     {locations.map((loc, index) => (
                                         <div key={index} className="relative flex flex-col items-start p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-[var(--brand-accent)]/50 transition-colors">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-full border-[3px] border-[var(--brand-accent)] bg-slate-900 shadow-[0_0_15px_rgba(209,241,50,0.5)] z-10 mb-4"></div>
                                             <span className="font-bold text-white leading-snug text-lg md:text-xl mb-2">{loc.organization}</span>
                                             <span className="text-sm md:text-base text-emerald-400 font-medium mt-auto">{loc.period}</span>
                                         </div>
