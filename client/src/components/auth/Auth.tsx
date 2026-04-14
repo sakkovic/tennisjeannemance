@@ -69,7 +69,7 @@ const Auth = () => {
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
             <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Tennis JM</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Sakka Tennis Messanger</h1>
                     <p className="text-slate-500">Player Portal & Messenger</p>
                 </div>
 
