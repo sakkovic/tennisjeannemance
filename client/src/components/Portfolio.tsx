@@ -183,9 +183,9 @@ const Portfolio = () => {
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
 
-                <div className="relative h-full p-4 md:px-12 flex flex-col justify-center">
+                <div className="relative h-full px-12 py-4 md:px-20 flex flex-col justify-center">
                   <motion.div
-                    className="text-white z-10 pr-4 sm:pr-0 sm:max-w-md md:max-w-lg"
+                    className="text-white z-10 sm:max-w-md md:max-w-lg"
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
